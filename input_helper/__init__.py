@@ -1,5 +1,6 @@
 import re
 from datetime import timedelta
+from os.path import isfile
 
 
 RX_HMS = re.compile(r'^((?P<hours>\d+)h)?((?P<minutes>\d+)m)?((?P<seconds>\d+)s)?$')
@@ -9,6 +10,23 @@ RX_COLON = re.compile(r'^((?P<hours>\d+):)?(?P<minutes>\d+):(?P<seconds>\d+)$')
 def string_to_set(s):
     """Return a set of strings from s where items are separated by any of , ; |"""
     return set(re.split(r'\s*[,;\|]\s*', s)) - set([''])
+
+
+def get_all_urls(*urls_or_filenames):
+    """Return a list of all urls from objects that are urls or files of urls"""
+    urls = []
+    for thing in urls_or_filenames:
+        if isfile(thing):
+            with open(thing, 'r') as fp:
+                text = fp.read()
+            urls.extend([
+                url
+                for url in re.split('\r?\n', text)
+                if url and '://' in url
+            ])
+        elif '://' in thing:
+            urls.append(thing)
+    return urls
 
 
 def from_string(val):

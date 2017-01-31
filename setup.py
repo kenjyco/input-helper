@@ -6,14 +6,14 @@ with open('README.rst', 'r') as fp:
 
 setup(
     name='input-helper',
-    version='0.1.0',
+    version='0.1.1',
     description='Common CLI input helper functions and string/arg conversions',
     long_description=long_description,
     author='Ken',
     author_email='kenjyco@gmail.com',
     license='MIT',
     url='https://github.com/kenjyco/input-helper',
-    download_url='https://github.com/kenjyco/input-helper/tarball/v0.1.0',
+    download_url='https://github.com/kenjyco/input-helper/tarball/v0.1.1',
     packages=['input_helper'],
     classifiers=[
         'Development Status :: 3 - Alpha',

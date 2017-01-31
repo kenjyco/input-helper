@@ -21,4 +21,6 @@ In [4]: response = ih.user_input('type some input, human')
 In [5]: selected = ih.make_selections(list_of_items)
 
 In [6]: seconds = ih.timestamp_to_seconds('1h22m33s')
+
+In [7]: urls = ih.get_all_urls('some-file-with-urls.txt', 'https://blah.net')
 ```
