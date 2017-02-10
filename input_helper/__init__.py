@@ -149,3 +149,69 @@ def make_selections(items, prompt='', wrap=True, item_format=''):
             pass
 
     return selected
+
+
+def parse_command(input_line):
+    """Split a string into cmd & args based on delimiter defined in the string
+
+    Provides a flexible way to receive a command name and its arguments in a
+    single string.
+
+    - first word of the string is the command name
+    - remaining parts of the string are the arguments
+        - if the delimiter used to separate arguments is not a space, the last
+          character(s) of the string should be the delimiter (extra whitespace
+          is ok)
+        - extra whitespace around individual arguments is trimmed off
+
+    Examples:
+
+    >>> from pprint import pprint
+
+    >>> pprint(parse_command('sum 4 5 18'))
+    {'args': ['4', '5', '18'], 'cmd': 'sum'}
+
+    >>> pprint(parse_command('thinger first thing -- second thing -- third thing --'))
+    {'args': ['first thing', 'second thing', 'third thing'], 'cmd': 'thinger'}
+
+    >>> pprint(parse_command('   colon grr :: noise a thing makes ::    '))
+    {'args': ['grr', 'noise a thing makes'], 'cmd': 'colon'}
+
+    >>> pprint(parse_command('pprint'))
+    {'cmd': 'pprint'}
+    """
+    rx_delim = re.compile(r'''
+        ^\s*(?P<cmd>\S+)\s+
+        (?P<args>.*?)
+        \s*(?P<delim>[^A-Za-z0-9\s]+)\s*$
+        ''', re.VERBOSE
+    )
+    rx_space = re.compile(r'''
+        ^\s*(?P<cmd>\S+)\s+
+        (?P<args>.*?)$
+        ''', re.VERBOSE
+    )
+    rx_cmd = re.compile(r'''
+        ^\s*(?P<cmd>\S+)\s*$
+        ''', re.VERBOSE
+    )
+
+    try:
+        d = rx_delim.match(input_line).groupdict()
+    except AttributeError:
+        try:
+            d = rx_space.match(input_line).groupdict()
+        except AttributeError:
+            try:
+                d = rx_cmd.match(input_line).groupdict()
+            except AttributeError:
+                return
+
+    if 'args' in d:
+        if 'delim' in d:
+            d['args'] = [arg.strip() for arg in d['args'].split(d['delim'])]
+            d.pop('delim')
+        else:
+            d['args'] = d['args'].split()
+
+    return d
