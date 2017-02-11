@@ -1,4 +1,4 @@
-from setuptools import setup
+from setuptools import setup, find_packages
 
 
 with open('README.rst', 'r') as fp:
@@ -6,15 +6,17 @@ with open('README.rst', 'r') as fp:
 
 setup(
     name='input-helper',
-    version='0.1.1',
+    version='0.1.2',
     description='Common CLI input helper functions and string/arg conversions',
     long_description=long_description,
     author='Ken',
     author_email='kenjyco@gmail.com',
     license='MIT',
     url='https://github.com/kenjyco/input-helper',
-    download_url='https://github.com/kenjyco/input-helper/tarball/v0.1.1',
-    packages=['input_helper'],
+    download_url='https://github.com/kenjyco/input-helper/tarball/v0.1.2',
+    packages=find_packages(),
+    setup_requires=['pytest-runner'],
+    tests_require=['pytest'],
     classifiers=[
         'Development Status :: 3 - Alpha',
         'License :: OSI Approved :: MIT License',
