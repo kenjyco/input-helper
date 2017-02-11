@@ -23,6 +23,5 @@ setup(
         'Topic :: Software Development :: Libraries',
         'Intended Audience :: Developers',
     ],
-    keywords = ['input', 'cli', 'helper']
+    keywords=['input', 'cli', 'helper']
 )
-

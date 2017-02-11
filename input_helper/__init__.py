@@ -1,4 +1,5 @@
 import re
+import textwrap
 from datetime import timedelta
 from os.path import isfile
 
@@ -180,21 +181,18 @@ def parse_command(input_line):
     >>> pprint(parse_command('pprint'))
     {'cmd': 'pprint'}
     """
-    rx_delim = re.compile(r'''
-        ^\s*(?P<cmd>\S+)\s+
+    rx_delim = re.compile(
+        r'''^\s*(?P<cmd>\S+)\s+
         (?P<args>.*?)
         \s*(?P<delim>[^A-Za-z0-9\s]+)\s*$
         ''', re.VERBOSE
     )
-    rx_space = re.compile(r'''
-        ^\s*(?P<cmd>\S+)\s+
+    rx_space = re.compile(
+        r'''^\s*(?P<cmd>\S+)\s+
         (?P<args>.*?)$
         ''', re.VERBOSE
     )
-    rx_cmd = re.compile(r'''
-        ^\s*(?P<cmd>\S+)\s*$
-        ''', re.VERBOSE
-    )
+    rx_cmd = re.compile(r'^\s*(?P<cmd>\S+)\s*$')
 
     try:
         d = rx_delim.match(input_line).groupdict()
