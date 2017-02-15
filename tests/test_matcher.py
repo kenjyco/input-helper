@@ -2,7 +2,7 @@ import datetime
 from input_helper.matcher import (
     LeadingSpacesMatcher, DoubleQuoteMatcher, SingleQuoteMatcher,
     BacktickMatcher, MentionMatcher, TagMatcher, CommentMatcher,
-    CapitalizedPhraseMatcher, AllCapsPhraseMatcher, ParenMatcher,
+    CapitalizedPhraseMatcher, AllCapsPhraseMatcher, CurlyMatcher, ParenMatcher,
     DollarCommandMatcher, UrlMatcher, NonUrlTextMatcher,
     ScrotFileMatcher, ScrotFileMatcher2, FehSaveFileMatcher,
     PsOutputMatcher, ZshHistoryLineMatcher,
@@ -149,6 +149,14 @@ class TestAllCapsPhraseMatcher(object):
         cm = AllCapsPhraseMatcher()
         result = cm(line)
         assert result == {'allcaps_phrase_list': ['GET OUT']}
+
+
+class TestCurlyMatcher(object):
+    def test_multiple(self):
+        line = '{_ts} -> field1={field1}, field2={field2}'
+        curlymatcher = CurlyMatcher()
+        result = curlymatcher(line)
+        assert result == {'curly_group_list': ['_ts', 'field1', 'field2']}
 
 
 class TestParenMatcher(object):

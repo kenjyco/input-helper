@@ -194,6 +194,15 @@ class AllCapsPhraseMatcher(Matcher):
     rx_iter = re.compile(r'(^|\s|\"|\()(?P<allcaps_phrase>[A-Z][A-Z\-\.,]+(\s+[A-Z][A-Z\-\.,]+)*)')
 
 
+class CurlyMatcher(Matcher):
+    """Match text between curly braces
+
+    No attempt to perform nested matching.
+    """
+    # rx_iter = re.compile(r'(^|\s)\{(?P<curly_group>[^\}]+)\}')
+    rx_iter = re.compile(r'\{(?P<curly_group>[^\}]+)\}')
+
+
 class ParenMatcher(Matcher):
     """Match text between parentheses
 
