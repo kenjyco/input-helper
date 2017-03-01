@@ -8,6 +8,7 @@ from input_helper import matcher
 RX_HMS = re.compile(r'^((?P<hours>\d+)h)?((?P<minutes>\d+)m)?((?P<seconds>\d+)s)?$')
 RX_COLON = re.compile(r'^((?P<hours>\d+):)?(?P<minutes>\d+):(?P<seconds>\d+)$')
 sm = matcher.SpecialTextMultiMatcher()
+um = matcher.UrlMatcher()
 
 
 def string_to_set(s):
@@ -22,13 +23,15 @@ def get_all_urls(*urls_or_filenames):
         if isfile(thing):
             with open(thing, 'r') as fp:
                 text = fp.read()
-            urls.extend([
-                url
-                for url in re.split('\r?\n', text)
-                if url and '://' in url
-            ])
-        elif '://' in thing:
-            urls.append(thing)
+
+            for line in re.split('\r?\n', text):
+                matched = um(line)
+                if matched:
+                    urls.extend(matched['url_list'])
+        else:
+            matched = um(thing)
+            if matched:
+                urls.extend(matched['url_list'])
     return urls
 
 
