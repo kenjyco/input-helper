@@ -3,7 +3,7 @@ from input_helper.matcher import (
     LeadingSpacesMatcher, DoubleQuoteMatcher, SingleQuoteMatcher,
     BacktickMatcher, MentionMatcher, TagMatcher, CommentMatcher,
     CapitalizedPhraseMatcher, AllCapsPhraseMatcher, CurlyMatcher, ParenMatcher,
-    DollarCommandMatcher, UrlMatcher, NonUrlTextMatcher,
+    DollarCommandMatcher, UrlDetailsMatcher, UrlMatcher, NonUrlTextMatcher,
     ScrotFileMatcher, ScrotFileMatcher2, FehSaveFileMatcher,
     PsOutputMatcher, ZshHistoryLineMatcher,
     SpecialTextMultiMatcher, MasterMatcher,
@@ -187,13 +187,13 @@ class TestDollarCommandMatcher(object):
         assert result == {'command_group_list': ['google "python regular expression"']}
 
 
-class TestUrlMatcher(object):
+class TestUrlDetailsMatcher(object):
     def test_url_with_no_path(self):
         line = 'http://simple.net/'
-        um = UrlMatcher()
+        um = UrlDetailsMatcher()
         result = um(line)
         assert result == {
-            'url_list': [
+            'url_details_list': [
                 {
                     'domain': 'simple.net',
                     'protocol': 'http',
@@ -204,10 +204,10 @@ class TestUrlMatcher(object):
 
     def test_multiple_urls(self):
         line = 'https://docs.python.org/2/howto/regex.html https://docs.python.org/2/library/re.html'
-        um = UrlMatcher()
+        um = UrlDetailsMatcher()
         result = um(line)
         assert result == {
-            'url_list': [
+            'url_details_list': [
                 {
                     'domain': 'docs.python.org',
                     'path': {
@@ -232,10 +232,10 @@ class TestUrlMatcher(object):
 
     def test_url_in_parens(self):
         line = '(https://docs.python.org/2.7/tutorial/index.html)'
-        um = UrlMatcher()
+        um = UrlDetailsMatcher()
         result = um(line)
         assert result == {
-            'url_list': [
+            'url_details_list': [
                 {
                     'domain': 'docs.python.org',
                     'full_url': 'https://docs.python.org/2.7/tutorial/index.html',
@@ -337,7 +337,7 @@ class TestZshHistoryLineMatcher(object):
 
 class TestSpecialTextMultiMatcher(object):
     def test_line_with_debug(self):
-        line = 'This #line has #tags (things starting with "#")... but SpecialTextMultiMatcher wont match http://some.link.net  # also has comments and parentheses'
+        line = 'This #line has #tags (things starting with "#")... and SpecialTextMultiMatcher will match http://some.link.net  # also has comments and parentheses'
         stm = SpecialTextMultiMatcher(debug=True)
         result = stm(line)
         assert result == {
@@ -345,17 +345,24 @@ class TestSpecialTextMultiMatcher(object):
                 'capitalized_phrase_list': 'CapitalizedPhraseMatcher',
                 'doublequoted_list': 'DoubleQuoteMatcher',
                 'line_comment': 'CommentMatcher',
+                'line_orig': 'IdentityMatcher',
                 'non_comment': 'CommentMatcher',
+                'non_url_text': 'NonUrlTextMatcher',
                 'paren_group_list': 'ParenMatcher',
-                'tag_list': 'TagMatcher'
+                'tag_list': 'TagMatcher',
+                'url_list': 'UrlMatcher'
             },
             'capitalized_phrase_list': ['This', 'SpecialTextMultiMatcher'],
             'doublequoted_list': ['#'],
             'line_comment': 'also has comments and parentheses',
-            'non_comment': 'This #line has #tags (things starting with "#")... but SpecialTextMultiMatcher wont match http://some.link.net',
+            'line_orig': 'This #line has #tags (things starting with "#")... and SpecialTextMultiMatcher will match http://some.link.net  # also has comments and parentheses',
+            'non_comment': 'This #line has #tags (things starting with "#")... and SpecialTextMultiMatcher will match http://some.link.net',
+            'non_url_text': 'This #line has #tags (things starting with "#")... and SpecialTextMultiMatcher will match # also has comments and parentheses',
             'paren_group_list': ['things starting with "#"'],
-            'tag_list': ['line', 'tags']
+            'tag_list': ['line', 'tags'],
+            'url_list': ['http://some.link.net']
         }
+
 
 
 class TestMasterMatcher(object):
@@ -367,7 +374,7 @@ class TestMasterMatcher(object):
         mastermatcher = MasterMatcher()
         result = mastermatcher(line)
         assert result['non_url_text'] == 'Bolo 0.99.2 FAQ'
-        assert result['url_list'][0]['domain'] == 'umich.edu'
+        assert result['url_details_list'][0]['domain'] == 'umich.edu'
         result2 = mastermatcher(filename)
         assert result2['hostname'] == 'cb120'
         result3 = mastermatcher(line2)
@@ -397,7 +404,7 @@ class TestMasterMatcher(object):
             'capitalized_phrase_list': ['Checkout'],
             'non_url_text': 'Checkout the #kenjyco repo:',
             'line_orig': 'Checkout the #kenjyco repo: https://github.com/kenjyco/kenjyco',
-            'url_list': [
+            'url_details_list': [
                 {
                     'domain': 'github.com',
                     'path': {
@@ -408,7 +415,9 @@ class TestMasterMatcher(object):
                     'full_url': 'https://github.com/kenjyco/kenjyco',
                     'filename_prefix': 'github.com--kenjyco--kenjyco'
                 }
-            ]}
+            ],
+            'url_list': ['https://github.com/kenjyco/kenjyco']
+        }
 
     def test_simple_line2_with_debug(self):
         line = 'http://www.amazon.com/Practical-Vim-Thought-Pragmatic-Programmers/dp/1934356980/ref=sr_1_1?ie=UTF8&qid=1434287619&sr=8-1&keywords=vim+book&pebp=1434287625417&perid=25745CD3359A47339D43 #Vim book that is supposed to be real good'
@@ -418,13 +427,14 @@ class TestMasterMatcher(object):
             '_key_matcher_dict': {
                 'non_url_text': 'NonUrlTextMatcher',
                 'tag_list': 'TagMatcher',
+                'url_details_list': 'UrlDetailsMatcher',
                 'url_list': 'UrlMatcher',
                 'line_orig': 'IdentityMatcher'
             },
             'non_url_text': '#Vim book that is supposed to be real good',
             'tag_list': ['Vim'],
             'line_orig': 'http://www.amazon.com/Practical-Vim-Thought-Pragmatic-Programmers/dp/1934356980/ref=sr_1_1?ie=UTF8&qid=1434287619&sr=8-1&keywords=vim+book&pebp=1434287625417&perid=25745CD3359A47339D43 #Vim book that is supposed to be real good',
-            'url_list': [
+            'url_details_list': [
                 {
                     'domain': 'amazon.com',
                     'full_url': 'http://www.amazon.com/Practical-Vim-Thought-Pragmatic-Programmers/dp/1934356980/ref=sr_1_1?ie=UTF8&qid=1434287619&sr=8-1&keywords=vim+book&pebp=1434287625417&perid=25745CD3359A47339D43',
@@ -444,4 +454,6 @@ class TestMasterMatcher(object):
                     },
                     'protocol': 'http'
                 }
-            ]}
+            ],
+            'url_list': ['http://www.amazon.com/Practical-Vim-Thought-Pragmatic-Programmers/dp/1934356980/ref=sr_1_1?ie=UTF8&qid=1434287619&sr=8-1&keywords=vim+book&pebp=1434287625417&perid=25745CD3359A47339D43']
+        }

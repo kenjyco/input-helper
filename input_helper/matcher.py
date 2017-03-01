@@ -271,13 +271,18 @@ class _UrlDetailsMatcher(Matcher):
         return results
 
 
+class UrlDetailsMatcher(Matcher):
+    """Match all URLs on a line and return details about the parts of each"""
+    rx_iter = re.compile(r'(?P<url_details>\w+://\S+)')
+    udm = _UrlDetailsMatcher()
+
+    def url_details(self, text):
+        return self.udm(text.strip(')').strip(']'))
+
+
 class UrlMatcher(Matcher):
     """Match all URLs on a line"""
     rx_iter = re.compile(r'(?P<url>\w+://\S+)')
-    udm = _UrlDetailsMatcher()
-
-    def url(self, text):
-        return self.udm(text.strip(')').strip(']'))
 
 
 class NonUrlTextMatcher(Matcher):
@@ -384,7 +389,8 @@ class SpecialTextMultiMatcher(MultiMatcher):
             DoubleQuoteMatcher(), SingleQuoteMatcher(), BacktickMatcher(),
             MentionMatcher(), TagMatcher(), CommentMatcher(),
             CapitalizedPhraseMatcher(), AllCapsPhraseMatcher(),
-            ParenMatcher(),
+            ParenMatcher(), UrlMatcher(), NonUrlTextMatcher(),
+            IdentityMatcher(),
         )
 
 
