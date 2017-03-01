@@ -2,10 +2,12 @@ import re
 import textwrap
 from datetime import timedelta
 from os.path import isfile
+from input_helper import matcher
 
 
 RX_HMS = re.compile(r'^((?P<hours>\d+)h)?((?P<minutes>\d+)m)?((?P<seconds>\d+)s)?$')
 RX_COLON = re.compile(r'^((?P<hours>\d+):)?(?P<minutes>\d+):(?P<seconds>\d+)$')
+sm = matcher.SpecialTextMultiMatcher()
 
 
 def string_to_set(s):
@@ -97,6 +99,15 @@ def user_input(prompt_string='input', ch='> '):
     except (EOFError, KeyboardInterrupt):
         print()
         return ''
+
+
+def user_input_fancy(prompt_string='input', ch='> '):
+    """Wrapper to user_input that will return a dict of parsed information
+
+    - prompt_string: string to display when asking for input
+    - ch: string appended to the main prompt_string
+    """
+    return sm(user_input(prompt_string, ch))
 
 
 def make_selections(items, prompt='', wrap=True, item_format=''):
