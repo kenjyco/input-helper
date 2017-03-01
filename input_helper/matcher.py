@@ -128,7 +128,7 @@ class MultiMatcher(object):
 
 class IdentityMatcher(Matcher):
     """Match the entire line"""
-    rx = re.compile(r'^(?P<line_orig>.*)$')
+    rx = re.compile(r'^(?P<text>.*)$')
 
 
 class LeadingSpacesMatcher(Matcher):

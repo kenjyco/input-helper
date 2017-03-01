@@ -345,7 +345,7 @@ class TestSpecialTextMultiMatcher(object):
                 'capitalized_phrase_list': 'CapitalizedPhraseMatcher',
                 'doublequoted_list': 'DoubleQuoteMatcher',
                 'line_comment': 'CommentMatcher',
-                'line_orig': 'IdentityMatcher',
+                'text': 'IdentityMatcher',
                 'non_comment': 'CommentMatcher',
                 'non_url_text': 'NonUrlTextMatcher',
                 'paren_group_list': 'ParenMatcher',
@@ -355,7 +355,7 @@ class TestSpecialTextMultiMatcher(object):
             'capitalized_phrase_list': ['This', 'SpecialTextMultiMatcher'],
             'doublequoted_list': ['#'],
             'line_comment': 'also has comments and parentheses',
-            'line_orig': 'This #line has #tags (things starting with "#")... and SpecialTextMultiMatcher will match http://some.link.net  # also has comments and parentheses',
+            'text': 'This #line has #tags (things starting with "#")... and SpecialTextMultiMatcher will match http://some.link.net  # also has comments and parentheses',
             'non_comment': 'This #line has #tags (things starting with "#")... and SpecialTextMultiMatcher will match http://some.link.net',
             'non_url_text': 'This #line has #tags (things starting with "#")... and SpecialTextMultiMatcher will match # also has comments and parentheses',
             'paren_group_list': ['things starting with "#"'],
@@ -384,15 +384,15 @@ class TestMasterMatcher(object):
         line = ''
         mm = MasterMatcher()
         result = mm(line)
-        assert result == {'line_orig': ''}
+        assert result == {'text': ''}
 
     def test_empty_with_debug(self):
         line = ''
         mm = MasterMatcher(debug=True)
         result = mm(line)
         assert result == {
-            '_key_matcher_dict': {'line_orig': 'IdentityMatcher'},
-            'line_orig': ''
+            '_key_matcher_dict': {'text': 'IdentityMatcher'},
+            'text': ''
         }
 
     def test_simple_line1(self):
@@ -403,7 +403,7 @@ class TestMasterMatcher(object):
             'tag_list': ['kenjyco'],
             'capitalized_phrase_list': ['Checkout'],
             'non_url_text': 'Checkout the #kenjyco repo:',
-            'line_orig': 'Checkout the #kenjyco repo: https://github.com/kenjyco/kenjyco',
+            'text': 'Checkout the #kenjyco repo: https://github.com/kenjyco/kenjyco',
             'url_details_list': [
                 {
                     'domain': 'github.com',
@@ -429,11 +429,11 @@ class TestMasterMatcher(object):
                 'tag_list': 'TagMatcher',
                 'url_details_list': 'UrlDetailsMatcher',
                 'url_list': 'UrlMatcher',
-                'line_orig': 'IdentityMatcher'
+                'text': 'IdentityMatcher'
             },
             'non_url_text': '#Vim book that is supposed to be real good',
             'tag_list': ['Vim'],
-            'line_orig': 'http://www.amazon.com/Practical-Vim-Thought-Pragmatic-Programmers/dp/1934356980/ref=sr_1_1?ie=UTF8&qid=1434287619&sr=8-1&keywords=vim+book&pebp=1434287625417&perid=25745CD3359A47339D43 #Vim book that is supposed to be real good',
+            'text': 'http://www.amazon.com/Practical-Vim-Thought-Pragmatic-Programmers/dp/1934356980/ref=sr_1_1?ie=UTF8&qid=1434287619&sr=8-1&keywords=vim+book&pebp=1434287625417&perid=25745CD3359A47339D43 #Vim book that is supposed to be real good',
             'url_details_list': [
                 {
                     'domain': 'amazon.com',
