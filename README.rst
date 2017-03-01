@@ -27,26 +27,34 @@ Usage
 
     In [7]: urls = ih.get_all_urls('some-file-with-urls.txt', 'https://blah.net')
 
-    In [8]: from input_helper import matcher
+    In [8]: from pprint import pprint
 
-    In [9]: from pprint import pprint
+    In [9]: mm = ih.matcher.MasterMatcher(debug=True)
 
-    In [10]: mm = matcher.MasterMatcher(debug=True)
-
-    In [11]: pprint(mm('@handle1 and @handle2 here are the #docs you requested https://github.com/kenjyco/input-helper/blob/master/README.md'))
-    {'_key_matcher_dict': {'line_orig': 'IdentityMatcher',
-                           'mention_list': 'MentionMatcher',
+    In [10]: pprint(mm('@handle1 and @handle2 here are the #docs you requested https://github.com/kenjyco/input-helper/blob/master/README.md'))
+    {'_key_matcher_dict': {'mention_list': 'MentionMatcher',
                            'non_url_text': 'NonUrlTextMatcher',
                            'tag_list': 'TagMatcher',
+                           'text': 'IdentityMatcher',
+                           'url_details_list': 'UrlDetailsMatcher',
                            'url_list': 'UrlMatcher'},
-     'line_orig': '@handle1 and @handle2 here are the #docs you requested '
-                  'https://github.com/kenjyco/input-helper/blob/master/README.md',
      'mention_list': ['handle1', 'handle2'],
      'non_url_text': '@handle1 and @handle2 here are the #docs you requested',
      'tag_list': ['docs'],
-     'url_list': [{'domain': 'github.com',
-                   'filename_prefix': 'github.com--kenjyco--input-helper--blob--master--README.md',
-                   'full_url': 'https://github.com/kenjyco/input-helper/blob/master/README.md',
-                   'path': {'full_path': '/kenjyco/input-helper/blob/master/README.md',
-                            'uri': '/kenjyco/input-helper/blob/master/README.md'},
-                   'protocol': 'https'}]}
+     'text': '@handle1 and @handle2 here are the #docs you requested '
+             'https://github.com/kenjyco/input-helper/blob/master/README.md',
+     'url_details_list': [{'domain': 'github.com',
+                           'filename_prefix': 'github.com--kenjyco--input-helper--blob--master--README.md',
+                           'full_url': 'https://github.com/kenjyco/input-helper/blob/master/README.md',
+                           'path': {'full_path': '/kenjyco/input-helper/blob/master/README.md',
+                                    'uri': '/kenjyco/input-helper/blob/master/README.md'},
+                           'protocol': 'https'}],
+     'url_list': ['https://github.com/kenjyco/input-helper/blob/master/README.md']}
+
+    In [11]: ih.user_input_fancy()
+    input> go to https://github.com/kenjyco for a good time #learning stuff
+    Out[11]:
+    {'line_orig': 'go to https://github.com/kenjyco for a good time #learning stuff',
+     'non_url_text': 'go to for a good time #learning stuff',
+     'tag_list': ['learning'],
+     'url_list': ['https://github.com/kenjyco']}
