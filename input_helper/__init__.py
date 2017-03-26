@@ -16,6 +16,11 @@ def string_to_set(s):
     return set(re.split(r'\s*[,;\|]\s*', s)) - set([''])
 
 
+def string_to_list(s):
+    """Return a list of strings from s where items are separated by any of , ; |"""
+    return [text for text in re.split(r'\s*[,;\|]\s*', s) if text]
+
+
 def get_all_urls(*urls_or_filenames):
     """Return a list of all urls from objects that are urls or files of urls"""
     urls = []

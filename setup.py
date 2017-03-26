@@ -6,19 +6,20 @@ with open('README.rst', 'r') as fp:
 
 setup(
     name='input-helper',
-    version='0.1.4',
+    version='0.1.5',
     description='Common CLI input helper functions and string/arg conversions',
     long_description=long_description,
     author='Ken',
     author_email='kenjyco@gmail.com',
     license='MIT',
     url='https://github.com/kenjyco/input-helper',
-    download_url='https://github.com/kenjyco/input-helper/tarball/v0.1.4',
+    download_url='https://github.com/kenjyco/input-helper/tarball/v0.1.5',
     packages=find_packages(),
     setup_requires=['pytest-runner'],
     tests_require=['pytest'],
     classifiers=[
         'Development Status :: 3 - Alpha',
+        'Environment :: Console',
         'License :: OSI Approved :: MIT License',
         'Programming Language :: Python',
         'Programming Language :: Python :: 3.5',
