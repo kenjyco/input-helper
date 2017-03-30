@@ -199,7 +199,6 @@ class CurlyMatcher(Matcher):
 
     No attempt to perform nested matching.
     """
-    # rx_iter = re.compile(r'(^|\s)\{(?P<curly_group>[^\}]+)\}')
     rx_iter = re.compile(r'\{(?P<curly_group>[^\}]+)\}')
 
 
@@ -390,7 +389,7 @@ class SpecialTextMultiMatcher(MultiMatcher):
             MentionMatcher(), TagMatcher(), CommentMatcher(),
             CapitalizedPhraseMatcher(), AllCapsPhraseMatcher(),
             ParenMatcher(), UrlMatcher(), NonUrlTextMatcher(),
-            IdentityMatcher(),
+            IdentityMatcher(), CurlyMatcher(),
         )
 
 
