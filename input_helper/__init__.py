@@ -9,7 +9,7 @@ RX_HMS = re.compile(r'^((?P<hours>\d+)h)?((?P<minutes>\d+)m)?((?P<seconds>\d+)s)
 RX_COLON = re.compile(r'^((?P<hours>\d+):)?(?P<minutes>\d+):(?P<seconds>\d+)$')
 sm = matcher.SpecialTextMultiMatcher()
 um = matcher.UrlMatcher()
-MULTI_MATCHER_RETURN_FIELDS = [
+SPECIAL_TEXT_RETURN_FIELDS = [
     'allcaps_phrase_list', 'backtick_list', 'capitalized_phrase_list',
     'curly_group_list', 'doublequoted_list', 'mention_list', 'paren_group_list',
     'singlequoted_list', 'tag_list', 'url_list'
