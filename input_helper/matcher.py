@@ -11,6 +11,7 @@ class Matcher(object):
     Sub-class Matcher, define a compiled regular expression (with NAMED
     GROUPS) for `rx` or `rx_iter`, and create methods using the group names in
     the regular expression.
+
     - only ONE named group may be used with `rx_iter`
     - only `rx` OR `rx_iter` may be defined for a Matcher sub-class (not both)
 
@@ -44,7 +45,8 @@ class Matcher(object):
             # Collect methods of sub-class as the `methods` dict
             methods = dict(filter(
                 lambda x: x[0] in match_dict.keys(),
-                inspect.getmembers(self)))
+                inspect.getmembers(self)
+            ))
 
         if match_iter_list:
             # Complain if rx_iter has more than one named group
@@ -59,7 +61,8 @@ class Matcher(object):
             _keys = set([key for k in match_iter_list for key in k.keys()])
             methods2 = dict(filter(
                 lambda x: x[0] in _keys,
-                inspect.getmembers(self)))
+                inspect.getmembers(self)
+            ))
 
         results = {}
 
@@ -138,7 +141,6 @@ class LeadingSpacesMatcher(Matcher):
     def leading_spaces(self, text):
         # Replace any tab characters with 4 spaces
         text = text.replace('\t', ' '*4)
-
         return len(text)
 
 

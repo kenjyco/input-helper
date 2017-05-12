@@ -364,7 +364,6 @@ class TestSpecialTextMultiMatcher(object):
         }
 
 
-
 class TestMasterMatcher(object):
     def test_several(self):
         """Gonna leave this gnarly test for now"""
