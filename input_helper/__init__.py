@@ -151,6 +151,24 @@ def timestamp_to_seconds(timestamp):
     return seconds
 
 
+def seconds_to_timestamps(seconds):
+    """Return a dict of timestamp strings for the given numnber of seconds"""
+    m, s = divmod(seconds, 60)
+    h, m = divmod(m, 60)
+    hms_parts = []
+    if h:
+        hms_parts.append('{}h'.format(h))
+    if m:
+        hms_parts.append('{}m'.format(m))
+    if s:
+        hms_parts.append('{}s'.format(s))
+
+    return {
+        'colon': '{:02}:{:02}:{:02}'.format(h, m, s),
+        'hms': ''.join(hms_parts)
+    }
+
+
 def user_input(prompt_string='input', ch='> '):
     """Prompt user for input
 
