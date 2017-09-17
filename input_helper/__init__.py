@@ -9,6 +9,7 @@ RX_HMS = re.compile(r'^((?P<hours>\d+)h)?((?P<minutes>\d+)m)?((?P<seconds>\d+)s)
 RX_COLON = re.compile(r'^((?P<hours>\d+):)?(?P<minutes>\d+):(?P<seconds>\d+)$')
 sm = matcher.SpecialTextMultiMatcher()
 um = matcher.UrlMatcher()
+cm = matcher.CurlyMatcher()
 SPECIAL_TEXT_RETURN_FIELDS = [
     'allcaps_phrase_list', 'backtick_list', 'capitalized_phrase_list',
     'curly_group_list', 'doublequoted_list', 'mention_list', 'paren_group_list',
@@ -76,6 +77,55 @@ def decode(obj, encoding='utf-8'):
         return obj
 
 
+def get_string_maker(item_format='', missing_key_default=''):
+    """Return a func that will create a string from a dict of data passed to it
+
+    - item_format: format string with placeholder data keys in curly braces
+        - if item_format is an empty string, just return identity function
+    - missing_key_default: default value to use when the returned 'make_string'
+      func is passed a dict that doesn't contain a key in the 'item_format'
+    """
+    def make_string(data):
+        try:
+           s = item_format.format(**data)
+        except UnicodeEncodeError:
+            data = {
+                k: v.encode('ascii', 'replace')
+                for k, v in data.items()
+            }
+            try:
+                s = item_format.format(**data)
+            except KeyError:
+                keys = cm(item_format).get('curly_group_list', [])
+                data.update({
+                    k: missing_key_default
+                    for k in keys
+                    if k not in data
+                })
+                s = item_format.format(**data)
+        except KeyError:
+            keys = cm(item_format).get('curly_group_list', [])
+            data.update({
+                k: missing_key_default
+                for k in keys
+                if k not in data
+            })
+            try:
+                s = item_format.format(**data)
+            except UnicodeEncodeError:
+                data = {
+                    k: v.encode('ascii', 'replace')
+                    for k, v in data.items()
+                }
+                s = item_format.format(**data)
+        return s
+
+    if item_format:
+        return make_string
+
+    return lambda x: x
+
+
 def timestamp_to_seconds(timestamp):
     """Return number of seconds (int) for given timestamp
 
@@ -141,22 +191,13 @@ def make_selections(items, prompt='', wrap=True, item_format=''):
     if not prompt:
         prompt = 'Make selections (separate by space): '
 
-    make_string = lambda x: x
-    if item_format:
-        make_string = lambda x: item_format.format(**x)
+    make_string = get_string_maker(item_format)
 
     # Generate the menu and display the items user will select from
     for i, item in enumerate(items):
         if i % 5 == 0 and i > 0:
             print('-' * 70)
-        try:
-            line = '{:4}) {}'.format(i, make_string(item))
-        except UnicodeEncodeError:
-            item = {
-                k: v.encode('ascii', 'replace')
-                for k, v in item.items()
-            }
-            line = '{:4}) {}'.format(i, make_string(item))
+        line = '{:4}) {}'.format(i, make_string(item))
         if wrap:
             print(textwrap.fill(line, subsequent_indent=' '*6))
         else:
