@@ -47,15 +47,19 @@ def get_all_urls(*urls_or_filenames):
 
 
 def from_string(val):
-    """Return simple bool, int, and float values contained in a string
+    """Return simple bool, None, int, and float values contained in a string
 
     Useful for converting items in config files parsed by
     `configparser.RawConfigParser()` or values pulled from Redis
     """
-    if val.lower() == 'true':
+    if val is None:
+        pass
+    elif val.lower() == 'true':
         val = True
     elif val.lower() == 'false':
         val = False
+    elif val.lower() == 'none':
+        val = None
     else:
         try:
             val = float(val)
