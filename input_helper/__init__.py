@@ -198,7 +198,6 @@ def user_input_fancy(prompt_string='input', ch='> '):
     return sm(user_input(prompt_string, ch))
 
 
-def make_selections(items, prompt='', wrap=True, item_format=''):
 def getchar():
     """Get a character of input (unbuffrered) from stdin
 
@@ -228,17 +227,23 @@ def user_input_unbuffered(prompt_string='input', ch='> '):
     return ''
 
 
+def make_selections(items, prompt='', wrap=True, item_format='', unbuffered=False):
     """Generate a menu from items, then return a subset of the items provided
 
     - items: list of strings or list of dicts
     - prompt: string to display when asking for input
     - wrap: True/False for whether or not to wrap long lines
     - item_format: format string for each item (when items are dicts)
+    - unbuffered: if True, list of 1 item will be returned on key press
+        - menu only displays first 10 items (since only 1 character of input
+          is allowed)
 
     Note: selection order is preserved in the returned items
     """
     if not items:
         return items
+    if unbuffered:
+        items = items[:10]
 
     selected = []
 
@@ -258,15 +263,22 @@ def user_input_unbuffered(prompt_string='input', ch='> '):
             print(line)
 
     print()
-    indices = user_input(prompt)
-    if not indices:
-        return []
-
-    for index in indices.split():
+    if unbuffered:
+        index = user_input_unbuffered(prompt)
         try:
             selected.append(items[int(index)])
         except (IndexError, ValueError):
             pass
+    else:
+        indices = user_input(prompt)
+        if not indices:
+            return []
+
+        for index in indices.split():
+            try:
+                selected.append(items[int(index)])
+            except (IndexError, ValueError):
+                pass
 
     return selected
 
