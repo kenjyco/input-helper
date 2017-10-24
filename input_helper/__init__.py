@@ -1,7 +1,10 @@
 import re
 import textwrap
+import tty
+import termios
 from datetime import timedelta
 from os.path import isfile
+from sys import stdin
 from input_helper import matcher
 
 
@@ -196,6 +199,35 @@ def user_input_fancy(prompt_string='input', ch='> '):
 
 
 def make_selections(items, prompt='', wrap=True, item_format=''):
+def getchar():
+    """Get a character of input (unbuffrered) from stdin
+
+    See: http://code.activestate.com/recipes/134892/
+    """
+    fd = stdin.fileno()
+    old_settings = termios.tcgetattr(fd)
+    try:
+        tty.setraw(stdin.fileno())
+        ch = stdin.read(1)
+    finally:
+        termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
+    return ch
+
+
+def user_input_unbuffered(prompt_string='input', ch='> '):
+    """Prompt user for a single character of unbuffered input
+
+    - prompt_string: string to display when asking for input
+    - ch: string appended to the main prompt_string
+    """
+    print(prompt_string + ch, end='\0', flush=True)
+    ch = getchar()
+    if ch not in ('\x04', '\x03', '\r'):
+        print(ch)
+        return ch
+    return ''
+
+
     """Generate a menu from items, then return a subset of the items provided
 
     - items: list of strings or list of dicts
