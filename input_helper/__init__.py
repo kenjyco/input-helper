@@ -274,11 +274,14 @@ def make_selections(items, prompt='', wrap=True, item_format='', unbuffered=Fals
         if not indices:
             return []
 
-        for index in indices.split():
-            try:
-                selected.append(items[int(index)])
-            except (IndexError, ValueError):
-                pass
+        if 'a' in indices:
+            selected = items[:]
+        else:
+            for index in indices.split():
+                try:
+                    selected.append(items[int(index)])
+                except (IndexError, ValueError):
+                    pass
 
     return selected
 
