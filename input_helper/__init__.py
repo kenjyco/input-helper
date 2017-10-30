@@ -222,30 +222,36 @@ def getchar():
     return ch
 
 
-def user_input_unbuffered(prompt_string='input', ch='> '):
+def user_input_unbuffered(prompt_string='input', ch='> ', raise_interrupt=False):
     """Prompt user for a single character of unbuffered input
 
     - prompt_string: string to display when asking for input
     - ch: string appended to the main prompt_string
+    - raise_interrupt: if True, raise KeyboardInterrupt when ctrl+c is pressed
     """
     print(prompt_string + ch, end='\0', flush=True)
     ch = getchar()
     if ch not in ('\x04', '\x03', '\r'):
         print(ch)
         return ch
+    elif ch == '\x03' and raise_interrupt:
+        raise KeyboardInterrupt
     return ''
 
 
-def make_selections(items, prompt='', wrap=True, item_format='', unbuffered=False):
+def make_selections(items, prompt='', wrap=True, item_format='', unbuffered=False,
+                    raise_interrupt=False):
     """Generate a menu from items, then return a subset of the items provided
 
-    - items: list of strings or list of dicts
+    - items: list of strings, list of dicts, or list of tuples
     - prompt: string to display when asking for input
     - wrap: True/False for whether or not to wrap long lines
-    - item_format: format string for each item (when items are dicts)
+    - item_format: format string for each item (when items are dicts or tuples)
     - unbuffered: if True, list of 1 item will be returned on key press
         - menu only displays first 10 items (since only 1 character of input
           is allowed)
+    - raise_interrupt: if True and unbuffered is True, raise KeyboardInterrupt
+      when ctrl+c is pressed
 
     Note: selection order is preserved in the returned items
     """
@@ -273,7 +279,7 @@ def make_selections(items, prompt='', wrap=True, item_format='', unbuffered=Fals
 
     print()
     if unbuffered:
-        index = user_input_unbuffered(prompt)
+        index = user_input_unbuffered(prompt, raise_interrupt=raise_interrupt)
         try:
             selected.append(items[int(index)])
         except (IndexError, ValueError):
