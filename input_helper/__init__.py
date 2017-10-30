@@ -84,6 +84,11 @@ def decode(obj, encoding='utf-8'):
         return obj
 
 
+def get_keys_in_string(s):
+    """Return a list of keys in a given format string"""
+    return cm(s).get('curly_group_list', [])
+
+
 def get_string_maker(item_format='', missing_key_default=''):
     """Return a func that will create a string from a dict/tuple of data passed to it
 
@@ -105,7 +110,7 @@ def get_string_maker(item_format='', missing_key_default=''):
             try:
                 s = item_format.format(**data)
             except KeyError:
-                keys = cm(item_format).get('curly_group_list', [])
+                keys = get_keys_in_string(item_format)
                 data.update({
                     k: missing_key_default
                     for k in keys
@@ -113,7 +118,7 @@ def get_string_maker(item_format='', missing_key_default=''):
                 })
                 s = item_format.format(**data)
         except KeyError:
-            keys = cm(item_format).get('curly_group_list', [])
+            keys = get_keys_in_string(item_format)
             data.update({
                 k: missing_key_default
                 for k in keys
