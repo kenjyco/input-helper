@@ -85,10 +85,12 @@ def decode(obj, encoding='utf-8'):
 
 
 def get_string_maker(item_format='', missing_key_default=''):
-    """Return a func that will create a string from a dict of data passed to it
+    """Return a func that will create a string from a dict/tuple of data passed to it
 
     - item_format: format string with placeholder data keys in curly braces
         - if item_format is an empty string, just return identity function
+        - if passing a tuple to this function, the positional curly braces
+          can be empty, contain integers, etc
     - missing_key_default: default value to use when the returned 'make_string'
       func is passed a dict that doesn't contain a key in the 'item_format'
     """
@@ -125,6 +127,8 @@ def get_string_maker(item_format='', missing_key_default=''):
                     for k, v in data.items()
                 }
                 s = item_format.format(**data)
+        except TypeError:
+           s = item_format.format(*data)
         return s
 
     if item_format:
