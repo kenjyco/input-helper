@@ -1,17 +1,14 @@
 Install
-^^^^^^^
+-------
 
 ::
 
-    % pip install input-helper
+    % pip3 install input-helper
 
 Usage
-^^^^^
+-----
 
-::
-
-    % ipython
-    ...
+.. code:: python
 
     In [1]: import input_helper as ih
 

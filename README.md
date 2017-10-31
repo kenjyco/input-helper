@@ -1,15 +1,12 @@
-#### Install
+## Install
 
 ```
-% pip install input-helper
+% pip3 install input-helper
 ```
 
-#### Usage
+## Usage
 
-```
-% ipython
-...
-
+```python
 In [1]: import input_helper as ih
 
 In [2]: real_args = ih.string_to_set('arg1, arg2, arg3')
