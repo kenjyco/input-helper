@@ -2,6 +2,7 @@ import re
 import textwrap
 import tty
 import termios
+import string
 from datetime import timedelta
 from os.path import isfile
 from sys import stdin
@@ -18,6 +19,8 @@ SPECIAL_TEXT_RETURN_FIELDS = [
     'curly_group_list', 'doublequoted_list', 'mention_list', 'paren_group_list',
     'singlequoted_list', 'tag_list', 'url_list'
 ]
+CH2NUM = dict(zip(string.ascii_letters, range(10, len(string.ascii_letters))))
+NUM2CH = dict(zip(range(10, len(string.ascii_letters)), string.ascii_letters))
 
 
 def string_to_set(s):
@@ -248,8 +251,8 @@ def make_selections(items, prompt='', wrap=True, item_format='', unbuffered=Fals
     - wrap: True/False for whether or not to wrap long lines
     - item_format: format string for each item (when items are dicts or tuples)
     - unbuffered: if True, list of 1 item will be returned on key press
-        - menu only displays first 10 items (since only 1 character of input
-          is allowed)
+        - menu only displays first 52 items (since only 1 character of input
+          is allowed.. 0-9, a-z, A-Z)
     - raise_interrupt: if True and unbuffered is True, raise KeyboardInterrupt
       when ctrl+c is pressed
     - raise_exception_chars: list of characters that will raise a generic exception
@@ -260,7 +263,7 @@ def make_selections(items, prompt='', wrap=True, item_format='', unbuffered=Fals
     if not items:
         return items
     if unbuffered:
-        items = items[:10]
+        items = items[:52]
 
     selected = []
 
@@ -268,12 +271,19 @@ def make_selections(items, prompt='', wrap=True, item_format='', unbuffered=Fals
         prompt = 'Make selections (separate by space): '
 
     make_string = get_string_maker(item_format)
+    if len(items) > 52:
+        make_i = lambda i: i
+    else:
+        make_i = lambda i: i if i < 10 else '   {}'.format(NUM2CH[i])
 
     # Generate the menu and display the items user will select from
     for i, item in enumerate(items):
         if i % 5 == 0 and i > 0:
             print('-' * 70)
-        line = '{:4}) {}'.format(i, make_string(item))
+        line = '{:4}) {}'.format(
+            make_i(i),
+            make_string(item)
+        )
         if wrap:
             print(textwrap.fill(line, subsequent_indent=' '*6))
         else:
@@ -287,7 +297,10 @@ def make_selections(items, prompt='', wrap=True, item_format='', unbuffered=Fals
         try:
             selected.append(items[int(index)])
         except (IndexError, ValueError):
-            pass
+            try:
+                selected.append(items[CH2NUM[index]])
+            except (IndexError, KeyError):
+                pass
     else:
         indices = user_input(prompt)
         if not indices:
@@ -300,8 +313,10 @@ def make_selections(items, prompt='', wrap=True, item_format='', unbuffered=Fals
                 try:
                     selected.append(items[int(index)])
                 except (IndexError, ValueError):
-                    pass
-
+                    try:
+                        selected.append(items[CH2NUM[index]])
+                    except (IndexError, KeyError):
+                        pass
     return selected
 
 
