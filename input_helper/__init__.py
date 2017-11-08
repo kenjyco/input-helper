@@ -289,7 +289,7 @@ def make_selections(items, prompt='', wrap=True, item_format='', unbuffered=Fals
         if not indices:
             return []
 
-        if 'a' in indices:
+        if 'all' in indices:
             selected = items[:]
         else:
             for index in indices.split():
