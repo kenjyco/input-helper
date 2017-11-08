@@ -240,7 +240,7 @@ def user_input_unbuffered(prompt_string='input', ch='> ', raise_interrupt=False)
 
 
 def make_selections(items, prompt='', wrap=True, item_format='', unbuffered=False,
-                    raise_interrupt=False):
+                    raise_interrupt=False, raise_exception_chars=[]):
     """Generate a menu from items, then return a subset of the items provided
 
     - items: list of strings, list of dicts, or list of tuples
@@ -252,6 +252,8 @@ def make_selections(items, prompt='', wrap=True, item_format='', unbuffered=Fals
           is allowed)
     - raise_interrupt: if True and unbuffered is True, raise KeyboardInterrupt
       when ctrl+c is pressed
+    - raise_exception_chars: list of characters that will raise a generic exception
+      if typed while unbuffered is True
 
     Note: selection order is preserved in the returned items
     """
@@ -280,6 +282,8 @@ def make_selections(items, prompt='', wrap=True, item_format='', unbuffered=Fals
     print()
     if unbuffered:
         index = user_input_unbuffered(prompt, raise_interrupt=raise_interrupt)
+        if index in raise_exception_chars:
+            raise Exception
         try:
             selected.append(items[int(index)])
         except (IndexError, ValueError):
