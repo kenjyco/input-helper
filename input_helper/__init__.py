@@ -21,6 +21,21 @@ SPECIAL_TEXT_RETURN_FIELDS = [
 ]
 CH2NUM = dict(zip(string.ascii_letters, range(10, len(string.ascii_letters))))
 NUM2CH = dict(zip(range(10, len(string.ascii_letters)), string.ascii_letters))
+SIMPLE_CHARACTERS = string.ascii_letters + string.punctuation + ''.join([str(x) for x in range(10)])
+CH2NAME = {c: c for c in SIMPLE_CHARACTERS}
+CH2NAME.update({
+    '\t': 'Tab', '\r': 'Enter', '\x1b': 'Esc', '\x7f': 'Delete', ' ': 'Space',
+    '\x1bOP': 'F1', '\x1bOQ': 'F2', '\x1bOR': 'F3', '\x1bOS': 'F4', '\x1b[15~': 'F5',
+    '\x1b[17~': 'F6', '\x1b[18~': 'F7', '\x1b[19~': 'F8', '\x1b[20~': 'F9',
+    '\x1b[21~': 'F10', '\x1b[24~': 'F12',
+    '\x01': 'Ctrl+a', '\x05': 'Ctrl+e', '\x06': 'Ctrl+f', '\x07': 'Ctrl+g',
+    '\x0e': 'Ctrl+n', '\x0f': 'Ctrl+o', '\x10': 'Ctrl+p', '\x11': 'Ctrl+q',
+    '\x12': 'Ctrl+r', '\x13': 'Ctrl+s', '\x14': 'Ctrl+t', '\x15': 'Ctrl+u',
+    '\x16': 'Ctrl+v', '\x17': 'Ctrl+w', '\x18': 'Ctrl+x', '\x19': 'Ctrl+y', '\x1a': 'Ctrl+z',
+    '\x1b[D': '(left arrow)', '\x1b[C': '(right arrow)', '\x1b[B': '(down arrow)',
+    '\x1b[A': '(up arrow)',
+})
+NAME2CH = {v: k for k, v in CH2NAME.items()}
 
 
 def string_to_set(s):
