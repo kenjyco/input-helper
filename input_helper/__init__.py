@@ -19,8 +19,8 @@ SPECIAL_TEXT_RETURN_FIELDS = [
     'curly_group_list', 'doublequoted_list', 'mention_list', 'paren_group_list',
     'singlequoted_list', 'tag_list', 'url_list'
 ]
-CH2NUM = dict(zip(string.ascii_letters, range(10, len(string.ascii_letters))))
-NUM2CH = dict(zip(range(10, 10 + len(string.ascii_letters)), string.ascii_letters))
+CH2NUM = dict(zip(string.digits + string.ascii_letters, range(10 + len(string.ascii_letters))))
+NUM2CH = dict(zip(range(10 + len(string.ascii_letters)), string.digits + string.ascii_letters))
 SIMPLE_CHARACTERS = string.ascii_letters + string.punctuation + ''.join([str(x) for x in range(10)])
 CH2NAME = {c: c for c in SIMPLE_CHARACTERS}
 CH2NAME.update({
