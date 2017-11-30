@@ -259,13 +259,22 @@ def user_input_unbuffered(prompt_string='input', ch='> ', raise_interrupt=False)
 
 def get_selection_range_indices(start, stop):
     """Return the indices that occur between start and stop, including stop"""
-    try:
-        if type(start) == str:
+    if type(start) == str:
+        try:
             start = CH2NUM[start]
-        if type(stop) == str:
+        except KeyError:
+            try:
+                start = int(start)
+            except ValueError:
+                return []
+    if type(stop) == str:
+        try:
             stop = CH2NUM[stop]
-    except KeyError:
-        return []
+        except KeyError:
+            try:
+                stop = int(stop)
+            except ValueError:
+                return []
 
     if stop < start:
         start, stop = stop, start
