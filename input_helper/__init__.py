@@ -20,7 +20,7 @@ SPECIAL_TEXT_RETURN_FIELDS = [
     'singlequoted_list', 'tag_list', 'url_list'
 ]
 CH2NUM = dict(zip(string.ascii_letters, range(10, len(string.ascii_letters))))
-NUM2CH = dict(zip(range(10, len(string.ascii_letters)), string.ascii_letters))
+NUM2CH = dict(zip(range(10, 10 + len(string.ascii_letters)), string.ascii_letters))
 SIMPLE_CHARACTERS = string.ascii_letters + string.punctuation + ''.join([str(x) for x in range(10)])
 CH2NAME = {c: c for c in SIMPLE_CHARACTERS}
 CH2NAME.update({
@@ -266,7 +266,7 @@ def make_selections(items, prompt='', wrap=True, item_format='', unbuffered=Fals
     - wrap: True/False for whether or not to wrap long lines
     - item_format: format string for each item (when items are dicts or tuples)
     - unbuffered: if True, list of 1 item will be returned on key press
-        - menu only displays first 52 items (since only 1 character of input
+        - menu only displays first 62 items (since only 1 character of input
           is allowed.. 0-9, a-z, A-Z)
     - raise_interrupt: if True and unbuffered is True, raise KeyboardInterrupt
       when ctrl+c is pressed
@@ -278,7 +278,7 @@ def make_selections(items, prompt='', wrap=True, item_format='', unbuffered=Fals
     if not items:
         return items
     if unbuffered:
-        items = items[:52]
+        items = items[:62]
 
     selected = []
 
@@ -286,7 +286,7 @@ def make_selections(items, prompt='', wrap=True, item_format='', unbuffered=Fals
         prompt = 'Make selections (separate by space): '
 
     make_string = get_string_maker(item_format)
-    if len(items) > 52:
+    if len(items) > 62:
         make_i = lambda i: i
     else:
         make_i = lambda i: i if i < 10 else '   {}'.format(NUM2CH[i])
