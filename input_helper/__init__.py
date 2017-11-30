@@ -257,6 +257,22 @@ def user_input_unbuffered(prompt_string='input', ch='> ', raise_interrupt=False)
     return ''
 
 
+def get_selection_range_indices(start, stop):
+    """Return the indices that occur between start and stop, including stop"""
+    try:
+        if type(start) == str:
+            start = CH2NUM[start]
+        if type(stop) == str:
+            stop = CH2NUM[stop]
+    except KeyError:
+        return []
+
+    if stop < start:
+        start, stop = stop, start
+
+    return [x for x in range(start, stop)] + [stop]
+
+
 def make_selections(items, prompt='', wrap=True, item_format='', unbuffered=False,
                     raise_interrupt=False, raise_exception_chars=[]):
     """Generate a menu from items, then return a subset of the items provided
@@ -331,7 +347,14 @@ def make_selections(items, prompt='', wrap=True, item_format='', unbuffered=Fals
                     try:
                         selected.append(items[CH2NUM[index]])
                     except (IndexError, KeyError):
-                        pass
+                        if index.count('-') == 1:
+                            for i in get_selection_range_indices(*index.split('-')):
+                                try:
+                                    selected.append(items[i])
+                                except IndexError:
+                                    pass
+                        else:
+                            pass
     return selected
 
 
