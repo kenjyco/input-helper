@@ -276,10 +276,10 @@ def get_selection_range_indices(start, stop):
             except ValueError:
                 return []
 
-    if stop < start:
-        start, stop = stop, start
-
-    return [x for x in range(start, stop)] + [stop]
+    if start < stop:
+        return [x for x in range(start, stop)] + [stop]
+    else:
+        return [x for x in range(start, stop, -1)] + [stop]
 
 
 def make_selections(items, prompt='', wrap=True, item_format='', unbuffered=False,
