@@ -73,6 +73,7 @@ def from_string(val):
     Useful for converting items in config files parsed by
     `configparser.RawConfigParser()` or values pulled from Redis
     """
+    _val = val
     if val is None:
         pass
     elif val.lower() == 'true':
@@ -84,8 +85,11 @@ def from_string(val):
     else:
         try:
             val = float(val)
-            if val.is_integer():
-                val = int(val)
+            if _val.startswith('0'):
+                val = _val
+            else:
+                if val.is_integer():
+                    val = int(val)
         except ValueError:
             try:
                 val = int(val)
