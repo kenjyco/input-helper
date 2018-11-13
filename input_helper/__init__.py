@@ -111,6 +111,45 @@ def get_keys_in_string(s):
     return cm(s).get('curly_group_list', [])
 
 
+def filter_keys(some_dict, *keys):
+    """Return a dict with only the specified keys and values returned
+
+    - some_dict: a dict object that may contain other dicts and lists
+    - keys: a list of key names
+        - nested keynames are supported (i.e. 'person.address.zipcode')
+        - can also be a list of keys contained in a single string, separated
+          by one of , ; |
+    """
+    _keys = []
+    for key in keys:
+        _type = type(key)
+        if _type in (list, tuple):
+            for _key in key:
+                _keys.extend(string_to_list(_key))
+        elif _type == str:
+            _keys.extend(string_to_list(key))
+
+    data = {}
+    for key in _keys:
+        if not '.' in key:
+            data[key] = some_dict.get(key)
+        else:
+            _key, *subkeys = key.split('.')
+            _data = some_dict.get(_key, {})
+            for subkey in subkeys:
+                try:
+                    _data = _data.get(subkey)
+                except AttributeError:
+                    if type(_data) in (list, tuple):
+                        _data = [x.get(subkey) for x in _data]
+                        if len(_data) == 1:
+                            _data = _data[0]
+                    else:
+                        raise
+            data[key] = _data
+    return data
+
+
 def get_string_maker(item_format='', missing_key_default=''):
     """Return a func that will create a string from a dict/tuple of data passed to it
 
