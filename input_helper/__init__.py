@@ -131,8 +131,9 @@ def filter_keys(some_dict, *keys):
 
     data = {}
     for key in _keys:
+        key_dunder = key.replace('.', '__')
         if not '.' in key:
-            data[key] = some_dict.get(key)
+            data[key_dunder] = some_dict.get(key)
         else:
             _key, *subkeys = key.split('.')
             _data = some_dict.get(_key, {})
@@ -146,7 +147,7 @@ def filter_keys(some_dict, *keys):
                             _data = _data[0]
                     else:
                         raise
-            data[key] = _data
+            data[key_dunder] = _data
     return data
 
 
