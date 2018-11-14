@@ -411,6 +411,28 @@ def make_selections(items, prompt='', wrap=True, item_format='', unbuffered=Fals
     return selected
 
 
+def start_ipython(warn=False, **things):
+    """Start an ipython session
+
+    - warn: if True, and ipython is not found, print a message
+    - things: any objects that should be available in the ipython session
+    """
+    try:
+        from IPython import embed
+    except ImportError:
+        if warn:
+            print('Could not find ipython. Try to install with: pip3 install ipython')
+        return
+    if things:
+        from pprint import pprint
+        print('\n------------------------------------------------------------')
+        print('\nThe following objects will be available in ipython:\n')
+        pprint(things)
+        print('\n------------------------------------------------------------\n')
+        locals().update(things)
+    embed()
+
+
 def parse_command(input_line):
     """Split a string into cmd & args based on delimiter defined in the string
 
