@@ -111,7 +111,7 @@ def get_keys_in_string(s):
     return cm(s).get('curly_group_list', [])
 
 
-def filter_keys(some_dict, *keys):
+def filter_keys(some_dict, *keys, **conditions):
     """Return a dict with only the specified keys and values returned
 
     - some_dict: a dict object that may contain other dicts and lists
@@ -119,6 +119,13 @@ def filter_keys(some_dict, *keys):
         - nested keynames are supported (i.e. 'person.address.zipcode')
         - can also be a list of keys contained in a single string, separated
           by one of , ; |
+    - conditions: mapping of key names and single-variable funcs returning a bool
+        - note: if using a nested key, name the condition using '__' between the
+          key name parts instead of '.'
+        - if the value at the key is a list/tuple, the result will be a list
+          where items meet the specified condition
+        - if the value at the key is anything else, the result will be the value
+          if the condition is met, or None
     """
     _keys = []
     for key in keys:
@@ -132,21 +139,47 @@ def filter_keys(some_dict, *keys):
     data = {}
     for key in _keys:
         key_dunder = key.replace('.', '__')
+        condition = conditions.get(key_dunder)
         if not '.' in key:
-            data[key_dunder] = some_dict.get(key)
+            _data = some_dict.get(key)
+            _data_type = type(_data)
+            if _data_type in (list, tuple):
+                if condition:
+                    _data = [x for x in filter(condition, _data)]
+                _data_len = len(_data)
+                if _data_len == 1:
+                    _data = _data[0]
+                elif _data_len == 0:
+                    _data = None
+            else:
+                if condition:
+                    _data = _data if condition(_data) else None
+            data[key_dunder] = _data
         else:
             _key, *subkeys = key.split('.')
             _data = some_dict.get(_key, {})
+            _data_type = type(_data)
             for subkey in subkeys:
                 try:
-                    _data = _data.get(subkey)
+                    _data = _data.get(subkey, {})
                 except AttributeError:
-                    if type(_data) in (list, tuple):
-                        _data = [x.get(subkey) for x in _data]
-                        if len(_data) == 1:
+                    if _data_type in (list, tuple):
+                        if condition:
+                            _data = [x.get(subkey) for x in filter(condition, _data)]
+                        else:
+                            _data = [x.get(subkey) for x in _data]
+                        _data_len = len(_data)
+                        if _data_len == 1:
                             _data = _data[0]
+                        elif _data_len == 0:
+                            _data = None
                     else:
                         raise
+                else:
+                    if condition:
+                        _data = _data if condition(_data) else None
+            if _data == {}:
+                _data = None
             data[key_dunder] = _data
     return data
 
