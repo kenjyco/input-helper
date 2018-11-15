@@ -151,6 +151,19 @@ def filter_keys(some_dict, *keys):
     return data
 
 
+def rename_keys(some_dict, **mapping):
+    """Return a dict with the key names mapped from some_dict
+
+    - some_dict: a dict object
+    - mapping: names of keys in some_dict and what the new name should be
+    """
+    new_dict = {}
+    for k, v in some_dict.items():
+        key = mapping.get(k, k)
+        new_dict[key] = v
+    return new_dict
+
+
 def get_string_maker(item_format='', missing_key_default=''):
     """Return a func that will create a string from a dict/tuple of data passed to it
 
