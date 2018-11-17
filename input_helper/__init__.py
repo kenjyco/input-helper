@@ -196,6 +196,24 @@ def rename_keys(some_dict, **mapping):
         key = mapping.get(k, k)
         new_dict[key] = deepcopy(v)
     return new_dict
+
+
+def cast_keys(some_dict, **casting):
+    """Return a dict where the specified keys have values cast to another type
+
+    - some_dict: a dict object
+    - casting: names of keys in some_dict and the function to cast its value
+    """
+    new_dict = {}
+    for k, v in some_dict.items():
+        func = casting.get(k)
+        if func:
+            try:
+                new_dict[k] = func(v)
+            except:
+                new_dict[k] = deepcopy(v)
+        else:
+            new_dict[k] = deepcopy(v)
     return new_dict
 
 
