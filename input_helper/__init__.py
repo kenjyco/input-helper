@@ -75,7 +75,7 @@ def from_string(val):
     `configparser.RawConfigParser()` or values pulled from Redis
     """
     _val = val
-    if val is None:
+    if type(val) != str:
         pass
     elif val.lower() == 'true':
         val = True
@@ -86,7 +86,7 @@ def from_string(val):
     else:
         try:
             val = float(val)
-            if _val.startswith('0'):
+            if _val.startswith('0') and len(_val) > 1:
                 val = _val
             else:
                 if val.is_integer():
