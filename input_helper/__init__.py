@@ -6,6 +6,7 @@ import string
 from datetime import timedelta
 from os.path import isfile
 from sys import stdin
+from copy import deepcopy
 from input_helper import matcher
 
 
@@ -193,7 +194,8 @@ def rename_keys(some_dict, **mapping):
     new_dict = {}
     for k, v in some_dict.items():
         key = mapping.get(k, k)
-        new_dict[key] = v
+        new_dict[key] = deepcopy(v)
+    return new_dict
     return new_dict
 
 
