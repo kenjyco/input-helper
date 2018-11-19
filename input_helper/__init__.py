@@ -112,6 +112,70 @@ def get_keys_in_string(s):
     return cm(s).get('curly_group_list', [])
 
 
+def get_value_at_key(some_dict, key, condition=None):
+    """Return the value at a specified key (nested.key.name supported)
+
+    - some_dict: a dict object
+    - key: name of a key
+        - nested keynames are supported (i.e. 'person.address.zipcode')
+    - condition: a single-variable func returning a bool
+        - if the value at the key is a list/tuple, the result will be a list
+          where items meet the specified condition
+        - if the value at the key is anything else, the result will be the value
+          if the condition is met, or None
+    """
+    if not '.' in key:
+        _data = some_dict.get(key)
+        _data_type = type(_data)
+        if _data_type in (list, tuple):
+            if condition:
+                _data = [x for x in filter(condition, _data)]
+            _data_len = len(_data)
+            if _data_len == 1:
+                _data = _data[0]
+            elif _data_len == 0:
+                _data = None
+        else:
+            if condition:
+                _data = _data if condition(_data) else None
+
+    else:
+        _key, *subkeys = key.split('.')
+        _data = some_dict.get(_key, {})
+        _data_type = type(_data)
+        for subkey in subkeys:
+            try:
+                _data = _data.get(subkey, {})
+            except AttributeError as e:
+                if _data_type in (list, tuple):
+                    if condition:
+                        _data = [x.get(subkey) for x in filter(condition, _data)]
+                    else:
+                        _data = [x.get(subkey) for x in _data]
+                    _data_len = len(_data)
+                    if _data_len == 1:
+                        _data = _data[0]
+                    elif _data_len == 0:
+                        _data = None
+                else:
+                    _data = None
+            else:
+                if condition:
+                    if type(_data) in (list, tuple):
+                        _data = [x for x in filter(condition, _data)]
+                        _data_len = len(_data)
+                        if _data_len == 1:
+                            _data = _data[0]
+                        elif _data_len == 0:
+                            _data = None
+                    else:
+                        _data = _data if condition(_data) else None
+        if _data == {}:
+            _data = None
+
+    return _data
+
+
 def filter_keys(some_dict, *keys, **conditions):
     """Return a dict with only the specified keys and values returned
 
@@ -141,47 +205,7 @@ def filter_keys(some_dict, *keys, **conditions):
     for key in _keys:
         key_dunder = key.replace('.', '__')
         condition = conditions.get(key_dunder)
-        if not '.' in key:
-            _data = some_dict.get(key)
-            _data_type = type(_data)
-            if _data_type in (list, tuple):
-                if condition:
-                    _data = [x for x in filter(condition, _data)]
-                _data_len = len(_data)
-                if _data_len == 1:
-                    _data = _data[0]
-                elif _data_len == 0:
-                    _data = None
-            else:
-                if condition:
-                    _data = _data if condition(_data) else None
-            data[key_dunder] = _data
-        else:
-            _key, *subkeys = key.split('.')
-            _data = some_dict.get(_key, {})
-            _data_type = type(_data)
-            for subkey in subkeys:
-                try:
-                    _data = _data.get(subkey, {})
-                except AttributeError:
-                    if _data_type in (list, tuple):
-                        if condition:
-                            _data = [x.get(subkey) for x in filter(condition, _data)]
-                        else:
-                            _data = [x.get(subkey) for x in _data]
-                        _data_len = len(_data)
-                        if _data_len == 1:
-                            _data = _data[0]
-                        elif _data_len == 0:
-                            _data = None
-                    else:
-                        raise
-                else:
-                    if condition:
-                        _data = _data if condition(_data) else None
-            if _data == {}:
-                _data = None
-            data[key_dunder] = _data
+        data[key_dunder] = get_value_at_key(some_dict, key, condition)
     return data
 
 
