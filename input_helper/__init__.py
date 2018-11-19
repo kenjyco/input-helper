@@ -242,6 +242,28 @@ def cast_keys(some_dict, **casting):
     return new_dict
 
 
+def sort_by_keys(some_dicts, *keys, reverse=False):
+    """Sort the given list of dicts by the specified keys
+
+    - some_dicts: a list of dict objects
+    - keys: a list of key names (simple names, NO nesting)
+    - reverse: if True, reverse/descending order
+    """
+    _keys = []
+    for key in keys:
+        _type = type(key)
+        if _type in (list, tuple):
+            for _key in key:
+                _keys.extend(string_to_list(_key))
+        elif _type == str:
+            _keys.extend(string_to_list(key))
+
+    some_dicts.sort(
+        key=lambda x: tuple([x.get(k) for k in _keys]),
+        reverse=reverse
+    )
+
+
 def find_items(some_dicts, terms):
     """Return a generator containing dicts where specified terms are satisfied
 
