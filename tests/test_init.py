@@ -23,6 +23,53 @@ def some_dict():
     return d
 
 
+@pytest.fixture
+def some_dicts():
+    ds = [
+        {
+            'status': 'running',
+            'name': 'first',
+            'thing': {
+                'a': 1,
+                'b': 2
+            }
+        },
+        {
+            'status': 'running',
+            'name': 'second',
+            'thing': {
+                'a': 10,
+                'b': 5
+            }
+        },
+        {
+            'status': 'stopped',
+            'name': 'third',
+            'thing': {
+                'a': 0,
+                'b': 0
+            }
+        },
+        {
+            'status': 'running',
+            'name': 'fourth',
+            'thing': {
+                'a': 10,
+                'b': 2
+            }
+        },
+        {
+            'status': 'unknown',
+            'name': 'fifth',
+            'thing': {
+                'a': 10,
+                'b': 20
+            }
+        },
+    ]
+    return ds
+
+
 class TestDictThings(object):
     def test_filter_keys(self, some_dict):
         result = ih.filter_keys(
@@ -38,3 +85,66 @@ class TestDictThings(object):
             'Birds__Value': ['Some bird', 'Another bird'],
             'Monkey__Thing__Value': None
         }
+
+    def test_find_items_simple(self, some_dicts):
+        result = list(ih.find_items(some_dicts, 'thing.a:10'))
+        assert result == [
+            {
+                'status': 'running',
+                'name': 'second',
+                'thing': {
+                    'a': 10,
+                    'b': 5
+                }
+            },
+            {
+                'status': 'running',
+                'name': 'fourth',
+                'thing': {
+                    'a': 10,
+                    'b': 2
+                }
+            },
+            {
+                'status': 'unknown',
+                'name': 'fifth',
+                'thing': {
+                    'a': 10,
+                    'b': 20
+                }
+            }
+        ]
+
+    def test_find_items_complex(self, some_dicts):
+        result = list(ih.find_items(some_dicts, 'thing.a:10, status:unknown, status:stopped'))
+        assert result == [
+            {
+                'status': 'unknown',
+                'name': 'fifth',
+                'thing': {
+                    'a': 10,
+                    'b': 20
+                }
+            }
+        ]
+
+    def test_find_items_complex2(self, some_dicts):
+        result = list(ih.find_items(some_dicts, 'thing.a:10, thing.a:0, status:unknown, status:stopped'))
+        assert result == [
+            {
+                'status': 'stopped',
+                'name': 'third',
+                'thing': {
+                    'a': 0,
+                    'b': 0
+                }
+            },
+            {
+                'status': 'unknown',
+                'name': 'fifth',
+                'thing': {
+                    'a': 10,
+                    'b': 20
+                }
+            }
+        ]

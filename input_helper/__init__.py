@@ -7,6 +7,7 @@ from datetime import timedelta
 from os.path import isfile
 from sys import stdin
 from copy import deepcopy
+from collections import defaultdict
 from input_helper import matcher
 
 
@@ -239,6 +240,30 @@ def cast_keys(some_dict, **casting):
         else:
             new_dict[k] = deepcopy(v)
     return new_dict
+
+
+def find_items(some_dicts, terms):
+    """Return a generator containing dicts where specified terms are satisfied
+
+    - some_dicts: a list of dict objects
+    - terms: string of 'key:value' pairs separated by any of , ; |
+    """
+    terms = string_to_set(terms)
+    term_dict = defaultdict(list)
+    for term in terms:
+        key, *value = term.split(':')
+        value = ':'.join(value)
+        term_dict[key].append(from_string(value))
+
+    for some_dict in some_dicts:
+        matches = defaultdict(list)
+        for key, values in term_dict.items():
+            for value in values:
+                matches[key].append(
+                    from_string(get_value_at_key(some_dict, key)) == value
+                )
+        if all([any(v) for v in matches.values()]):
+            yield(some_dict)
 
 
 def get_string_maker(item_format='', missing_key_default=''):
