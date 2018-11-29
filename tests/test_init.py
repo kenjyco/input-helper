@@ -431,3 +431,116 @@ class TestDictThings(object):
                 }
             },
         ]
+
+    def test_find_items_operator_sloppyequal_str(self, some_dicts):
+        result = list(ih.find_items(some_dicts, 'status:$run'))
+        assert result == [
+            {
+                'status': 'running',
+                'name': 'first',
+                'thing': {
+                    'a': 1,
+                    'b': 2
+                }
+            },
+            {
+                'status': 'running',
+                'name': 'second',
+                'thing': {
+                    'a': 10,
+                    'b': 5
+                }
+            },
+            {
+                'status': 'running',
+                'name': 'fourth',
+                'thing': {
+                    'a': 10,
+                    'b': 2
+                }
+            },
+        ]
+
+    def test_find_items_operator_sloppyequal_str2(self, some_dicts):
+        result = list(ih.find_items(some_dicts, 'status:$KNOWN'))
+        assert result == [
+            {
+                'status': 'unknown',
+                'name': 'fifth',
+                'thing': {
+                    'a': 10,
+                    'b': 20
+                }
+            },
+        ]
+
+    def test_find_items_operator_sloppynotequal_str(self, some_dicts):
+        result = list(ih.find_items(some_dicts, 'status:~run'))
+        assert result == [
+            {
+                'status': 'stopped',
+                'name': 'third',
+                'thing': {
+                    'a': 0,
+                    'b': 0
+                }
+            },
+            {
+                'status': 'unknown',
+                'name': 'fifth',
+                'thing': {
+                    'a': 10,
+                    'b': 20
+                }
+            },
+        ]
+
+    def test_find_items_operator_sloppynotequal_str2(self, some_dicts):
+        result = list(ih.find_items(some_dicts, 'status:~RUN'))
+        assert result == [
+            {
+                'status': 'stopped',
+                'name': 'third',
+                'thing': {
+                    'a': 0,
+                    'b': 0
+                }
+            },
+            {
+                'status': 'unknown',
+                'name': 'fifth',
+                'thing': {
+                    'a': 10,
+                    'b': 20
+                }
+            },
+        ]
+
+    def test_find_items_operator_sloppy_complex(self, some_dicts):
+        result = list(ih.find_items(some_dicts, 'thing.a:<=10, thing.b:<10, status:$run'))
+        assert result == [
+            {
+                'status': 'running',
+                'name': 'first',
+                'thing': {
+                    'a': 1,
+                    'b': 2
+                }
+            },
+            {
+                'status': 'running',
+                'name': 'second',
+                'thing': {
+                    'a': 10,
+                    'b': 5
+                }
+            },
+            {
+                'status': 'running',
+                'name': 'fourth',
+                'thing': {
+                    'a': 10,
+                    'b': 2
+                }
+            },
+        ]

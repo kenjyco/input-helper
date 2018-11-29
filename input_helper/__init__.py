@@ -40,6 +40,36 @@ CH2NAME.update({
 NAME2CH = {v: k for k, v in CH2NAME.items()}
 
 
+def _sloppy_equal(x, y):
+    """Return True if y is x, or is y is in x"""
+    result = False
+    x = from_string(x)
+    y = from_string(y)
+    _type_x = type(x)
+    _type_y = type(y)
+    if _type_x == str and _type_y == str:
+        x = x.lower()
+        y = y.lower()
+    if y == x or y in x:
+        result = True
+    return result
+
+
+def _sloppy_not_equal(x, y):
+    """Return True if y is not x and y is not in x"""
+    result = False
+    x = from_string(x)
+    y = from_string(y)
+    _type_x = type(x)
+    _type_y = type(y)
+    if _type_x == str and _type_y == str:
+        x = x.lower()
+        y = y.lower()
+    if y != x and y not in x:
+        result = True
+    return result
+
+
 FIND_OPERATORS = {
     '<': lambda x, y: from_string(x) < from_string(y),
     '<=': lambda x, y: from_string(x) <= from_string(y),
@@ -48,6 +78,8 @@ FIND_OPERATORS = {
     '!': lambda x, y: from_string(x) != from_string(y),
     '!=': lambda x, y: from_string(x) != from_string(y),
     '==': lambda x, y: from_string(x) == from_string(y),
+    '$': _sloppy_equal,
+    '~': _sloppy_not_equal,
 }
 RX_FIND_OPERATORS = re.compile(
     '^(?P<operator>' +
@@ -311,7 +343,6 @@ def find_items(some_dicts, terms):
         else:
             operator = '=='
             value = from_string(value)
-
         term_dict[key].append((operator, value))
 
     for some_dict in some_dicts:
