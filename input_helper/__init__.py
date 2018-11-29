@@ -50,8 +50,15 @@ FIND_OPERATORS = {
     '==': lambda x, y: from_string(x) == from_string(y),
 }
 RX_FIND_OPERATORS = re.compile(
-    '^(?P<operator>' + '|'.join(FIND_OPERATORS) + ')+'
-    '(?P<value>.*)'
+    '^(?P<operator>' +
+    '|'.join([
+        ''.join([
+            '\\{}'.format(y)
+            for y in list(x)
+        ])
+        for x in FIND_OPERATORS
+    ]) +
+    ')+(?P<value>.*)'
 )
 
 
