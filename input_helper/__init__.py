@@ -40,6 +40,21 @@ CH2NAME.update({
 NAME2CH = {v: k for k, v in CH2NAME.items()}
 
 
+FIND_OPERATORS = {
+    '<': lambda x, y: from_string(x) < from_string(y),
+    '<=': lambda x, y: from_string(x) <= from_string(y),
+    '>': lambda x, y: from_string(x) > from_string(y),
+    '>=': lambda x, y: from_string(x) >= from_string(y),
+    '!': lambda x, y: from_string(x) != from_string(y),
+    '!=': lambda x, y: from_string(x) != from_string(y),
+    '==': lambda x, y: from_string(x) == from_string(y),
+}
+RX_FIND_OPERATORS = re.compile(
+    '^(?P<operator>' + '|'.join(FIND_OPERATORS) + ')+'
+    '(?P<value>.*)'
+)
+
+
 def string_to_set(s):
     """Return a set of strings from s where items are separated by any of , ; |"""
     return set(re.split(r'\s*[,;\|]\s*', s)) - set([''])
@@ -269,20 +284,36 @@ def find_items(some_dicts, terms):
 
     - some_dicts: a list of dict objects
     - terms: string of 'key:value' pairs separated by any of , ; |
+        - after the ':' any of the operators defined in FIND_OPERATORS may be
+          used before the value (i.e. 'rate:>5')
+        - no operator implies the '==' operator
     """
     terms = string_to_set(terms)
     term_dict = defaultdict(list)
     for term in terms:
-        key, *value = term.split(':')
-        value = ':'.join(value)
-        term_dict[key].append(from_string(value))
+        key, value = term.split(':', 1)
+        op_match = RX_FIND_OPERATORS.match(value)
+        if op_match:
+            data = op_match.groupdict()
+            operator = data['operator']
+            if data['value'].startswith('='):
+                operator += '='
+                value = from_string(data['value'][1:])
+            else:
+                value = from_string(data['value'])
+        else:
+            operator = '=='
+            value = from_string(value)
+
+        term_dict[key].append((operator, value))
 
     for some_dict in some_dicts:
         matches = defaultdict(list)
-        for key, values in term_dict.items():
-            for value in values:
+        for key, op_vals in term_dict.items():
+            for operator, value in op_vals:
+                v = from_string(get_value_at_key(some_dict, key))
                 matches[key].append(
-                    from_string(get_value_at_key(some_dict, key)) == value
+                    FIND_OPERATORS[operator](v, value)
                 )
         if all([any(v) for v in matches.values()]):
             yield(some_dict)

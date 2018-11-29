@@ -148,3 +148,152 @@ class TestDictThings(object):
                 }
             }
         ]
+
+    def test_find_items_operator_less(self, some_dicts):
+        result = list(ih.find_items(some_dicts, 'thing.a:<10'))
+        assert result == [
+            {
+                'status': 'running',
+                'name': 'first',
+                'thing': {
+                    'a': 1,
+                    'b': 2
+                }
+            },
+            {
+                'status': 'stopped',
+                'name': 'third',
+                'thing': {
+                    'a': 0,
+                    'b': 0
+                }
+            }
+        ]
+
+    def test_find_items_operator_lessequal(self, some_dicts):
+        result = list(ih.find_items(some_dicts, 'thing.a:<=10'))
+        assert result == [
+            {
+                'status': 'running',
+                'name': 'first',
+                'thing': {
+                    'a': 1,
+                    'b': 2
+                }
+            },
+            {
+                'status': 'running',
+                'name': 'second',
+                'thing': {
+                    'a': 10,
+                    'b': 5
+                }
+            },
+            {
+                'status': 'stopped',
+                'name': 'third',
+                'thing': {
+                    'a': 0,
+                    'b': 0
+                }
+            },
+            {
+                'status': 'running',
+                'name': 'fourth',
+                'thing': {
+                    'a': 10,
+                    'b': 2
+                }
+            },
+            {
+                'status': 'unknown',
+                'name': 'fifth',
+                'thing': {
+                    'a': 10,
+                    'b': 20
+                }
+            },
+        ]
+
+    def test_find_items_operator_greater(self, some_dicts):
+        result = list(ih.find_items(some_dicts, 'thing.a:>10'))
+        assert result == []
+
+    def test_find_items_operator_greaterequal(self, some_dicts):
+        result = list(ih.find_items(some_dicts, 'thing.a:>=10'))
+        assert result == [
+            {
+                'status': 'running',
+                'name': 'second',
+                'thing': {
+                    'a': 10,
+                    'b': 5
+                }
+            },
+            {
+                'status': 'running',
+                'name': 'fourth',
+                'thing': {
+                    'a': 10,
+                    'b': 2
+                }
+            },
+            {
+                'status': 'unknown',
+                'name': 'fifth',
+                'thing': {
+                    'a': 10,
+                    'b': 20
+                }
+            },
+        ]
+
+    def test_find_items_operator_notequal(self, some_dicts):
+        result = list(ih.find_items(some_dicts, 'thing.a:!10'))
+        assert result == [
+            {
+                'status': 'running',
+                'name': 'first',
+                'thing': {
+                    'a': 1,
+                    'b': 2
+                }
+            },
+            {
+                'status': 'stopped',
+                'name': 'third',
+                'thing': {
+                    'a': 0,
+                    'b': 0
+                }
+            },
+        ]
+
+    def test_find_items_operator_equal(self, some_dicts):
+        result = list(ih.find_items(some_dicts, 'thing.a:==10'))
+        assert result == [
+            {
+                'status': 'running',
+                'name': 'second',
+                'thing': {
+                    'a': 10,
+                    'b': 5
+                }
+            },
+            {
+                'status': 'running',
+                'name': 'fourth',
+                'thing': {
+                    'a': 10,
+                    'b': 2
+                }
+            },
+            {
+                'status': 'unknown',
+                'name': 'fifth',
+                'thing': {
+                    'a': 10,
+                    'b': 20
+                }
+            },
+        ]
