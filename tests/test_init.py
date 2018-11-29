@@ -115,7 +115,7 @@ class TestDictThings(object):
             }
         ]
 
-    def test_find_items_complex(self, some_dicts):
+    def test_find_items_simple_multi(self, some_dicts):
         result = list(ih.find_items(some_dicts, 'thing.a:10, status:unknown, status:stopped'))
         assert result == [
             {
@@ -128,7 +128,7 @@ class TestDictThings(object):
             }
         ]
 
-    def test_find_items_complex2(self, some_dicts):
+    def test_find_items_simple_multi2(self, some_dicts):
         result = list(ih.find_items(some_dicts, 'thing.a:10, thing.a:0, status:unknown, status:stopped'))
         assert result == [
             {
@@ -149,7 +149,7 @@ class TestDictThings(object):
             }
         ]
 
-    def test_find_items_operator_less(self, some_dicts):
+    def test_find_items_operator_less_num(self, some_dicts):
         result = list(ih.find_items(some_dicts, 'thing.a:<10'))
         assert result == [
             {
@@ -170,7 +170,7 @@ class TestDictThings(object):
             }
         ]
 
-    def test_find_items_operator_lessequal(self, some_dicts):
+    def test_find_items_operator_lessequal_num(self, some_dicts):
         result = list(ih.find_items(some_dicts, 'thing.a:<=10'))
         assert result == [
             {
@@ -215,11 +215,11 @@ class TestDictThings(object):
             },
         ]
 
-    def test_find_items_operator_greater(self, some_dicts):
+    def test_find_items_operator_greater_num(self, some_dicts):
         result = list(ih.find_items(some_dicts, 'thing.a:>10'))
         assert result == []
 
-    def test_find_items_operator_greaterequal(self, some_dicts):
+    def test_find_items_operator_greaterequal_num(self, some_dicts):
         result = list(ih.find_items(some_dicts, 'thing.a:>=10'))
         assert result == [
             {
@@ -248,7 +248,7 @@ class TestDictThings(object):
             },
         ]
 
-    def test_find_items_operator_notequal(self, some_dicts):
+    def test_find_items_operator_notequal_num(self, some_dicts):
         result = list(ih.find_items(some_dicts, 'thing.a:!10'))
         assert result == [
             {
@@ -269,7 +269,7 @@ class TestDictThings(object):
             },
         ]
 
-    def test_find_items_operator_equal(self, some_dicts):
+    def test_find_items_operator_equal_num(self, some_dicts):
         result = list(ih.find_items(some_dicts, 'thing.a:==10'))
         assert result == [
             {
