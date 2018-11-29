@@ -170,6 +170,27 @@ class TestDictThings(object):
             }
         ]
 
+    def test_find_items_operator_less_str(self, some_dicts):
+        result = list(ih.find_items(some_dicts, 'name:<fourth'))
+        assert result == [
+            {
+                'status': 'running',
+                'name': 'first',
+                'thing': {
+                    'a': 1,
+                    'b': 2
+                }
+            },
+            {
+                'status': 'unknown',
+                'name': 'fifth',
+                'thing': {
+                    'a': 10,
+                    'b': 20
+                }
+            },
+        ]
+
     def test_find_items_operator_lessequal_num(self, some_dicts):
         result = list(ih.find_items(some_dicts, 'thing.a:<=10'))
         assert result == [
@@ -215,9 +236,59 @@ class TestDictThings(object):
             },
         ]
 
+    def test_find_items_operator_lessequal_str(self, some_dicts):
+        result = list(ih.find_items(some_dicts, 'status:<=runnings'))
+        assert result == [
+            {
+                'status': 'running',
+                'name': 'first',
+                'thing': {
+                    'a': 1,
+                    'b': 2
+                }
+            },
+            {
+                'status': 'running',
+                'name': 'second',
+                'thing': {
+                    'a': 10,
+                    'b': 5
+                }
+            },
+            {
+                'status': 'running',
+                'name': 'fourth',
+                'thing': {
+                    'a': 10,
+                    'b': 2
+                }
+            },
+        ]
+
     def test_find_items_operator_greater_num(self, some_dicts):
         result = list(ih.find_items(some_dicts, 'thing.a:>10'))
         assert result == []
+
+    def test_find_items_operator_greater_str(self, some_dicts):
+        result = list(ih.find_items(some_dicts, 'name:>fourth'))
+        assert result == [
+            {
+                'status': 'running',
+                'name': 'second',
+                'thing': {
+                    'a': 10,
+                    'b': 5
+                }
+            },
+            {
+                'status': 'stopped',
+                'name': 'third',
+                'thing': {
+                    'a': 0,
+                    'b': 0
+                }
+            },
+        ]
 
     def test_find_items_operator_greaterequal_num(self, some_dicts):
         result = list(ih.find_items(some_dicts, 'thing.a:>=10'))
@@ -236,6 +307,27 @@ class TestDictThings(object):
                 'thing': {
                     'a': 10,
                     'b': 2
+                }
+            },
+            {
+                'status': 'unknown',
+                'name': 'fifth',
+                'thing': {
+                    'a': 10,
+                    'b': 20
+                }
+            },
+        ]
+
+    def test_find_items_operator_greaterequal_str(self, some_dicts):
+        result = list(ih.find_items(some_dicts, 'status:>=stop'))
+        assert result == [
+            {
+                'status': 'stopped',
+                'name': 'third',
+                'thing': {
+                    'a': 0,
+                    'b': 0
                 }
             },
             {
@@ -269,6 +361,27 @@ class TestDictThings(object):
             },
         ]
 
+    def test_find_items_operator_notequal_str(self, some_dicts):
+        result = list(ih.find_items(some_dicts, 'status:!running'))
+        assert result == [
+            {
+                'status': 'stopped',
+                'name': 'third',
+                'thing': {
+                    'a': 0,
+                    'b': 0
+                }
+            },
+            {
+                'status': 'unknown',
+                'name': 'fifth',
+                'thing': {
+                    'a': 10,
+                    'b': 20
+                }
+            },
+        ]
+
     def test_find_items_operator_equal_num(self, some_dicts):
         result = list(ih.find_items(some_dicts, 'thing.a:==10'))
         assert result == [
@@ -285,6 +398,27 @@ class TestDictThings(object):
                 'name': 'fourth',
                 'thing': {
                     'a': 10,
+                    'b': 2
+                }
+            },
+            {
+                'status': 'unknown',
+                'name': 'fifth',
+                'thing': {
+                    'a': 10,
+                    'b': 20
+                }
+            },
+        ]
+
+    def test_find_items_operator_equal_str(self, some_dicts):
+        result = list(ih.find_items(some_dicts, 'name:==first, name:==fifth'))
+        assert result == [
+            {
+                'status': 'running',
+                'name': 'first',
+                'thing': {
+                    'a': 1,
                     'b': 2
                 }
             },
