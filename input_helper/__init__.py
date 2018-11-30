@@ -38,6 +38,7 @@ CH2NAME.update({
     '\x1b[A': '(up arrow)',
 })
 NAME2CH = {v: k for k, v in CH2NAME.items()}
+TRANS_PUNC_TO_UNDERSCORE = str.maketrans(string.punctuation, '_' * len(string.punctuation))
 
 
 def _sloppy_equal(x, y):
@@ -160,6 +161,15 @@ def decode(obj, encoding='utf-8'):
         return obj.decode(encoding)
     except (AttributeError, UnicodeDecodeError):
         return obj
+
+
+def make_var_name(s):
+    """Return a valid Python variable name from string"""
+    result = s.translate(TRANS_PUNC_TO_UNDERSCORE)
+    result = result.strip().replace(' ', '_')
+    if re.match('^[^_A-z]', result):
+        result = '_' + result
+    return result
 
 
 def get_keys_in_string(s):
