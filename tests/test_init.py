@@ -109,6 +109,21 @@ class TestDictThings(object):
             'Monkey__Thing__Value': None
         }
 
+    def test_ignore_keys(self, some_dict):
+        result = ih.ignore_keys(
+            some_dict,
+            'Thing, Birds',
+        )
+        assert result == {
+            'Dogs': [10, 3],
+            'Cats': [2, 4, 8, 12, 19, 22],
+            'Mice': {
+                'a': 5,
+                'b': -10,
+                'c': [1, 2, 3]
+            }
+        }
+
     def test_find_items_simple(self, some_dicts):
         result = list(ih.find_items(some_dicts, 'thing.a:10'))
         assert result == [

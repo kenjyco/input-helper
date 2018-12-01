@@ -247,6 +247,31 @@ def get_value_at_key(some_dict, key, condition=None):
     return _data
 
 
+def ignore_keys(some_dict, *keys):
+    """Return a dict with all keys except the specified ignore keys
+
+    - some_dict: a dict object that may contain other dicts and lists
+    - keys: a list of key names (NO nested key)
+        - can also be a list of keys contained in a single string, separated
+          by one of , ; |
+    """
+    _keys = []
+    for key in keys:
+        _type = type(key)
+        if _type in (list, tuple):
+            for _key in key:
+                _keys.extend(string_to_list(_key))
+        elif _type == str:
+            _keys.extend(string_to_list(key))
+
+    data = {
+        key: deepcopy(value)
+        for key, value in some_dict.items()
+        if key not in _keys
+    }
+    return data
+
+
 def filter_keys(some_dict, *keys, **conditions):
     """Return a dict with only the specified keys and values returned
 
