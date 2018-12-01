@@ -70,6 +70,29 @@ def some_dicts():
     return ds
 
 
+@pytest.fixture
+def some_dicts2():
+    ds = [
+        {
+            'id': 'abc-12345',
+            'name': 'first',
+        },
+        {
+            'id': 'def-67890',
+            'name': 'second',
+        },
+        {
+            'id': 'hij-12390',
+            'name': 'third',
+        },
+        {
+            'id': 'klm-789',
+            'name': 'fourth',
+        },
+    ]
+    return ds
+
+
 class TestDictThings(object):
     def test_filter_keys(self, some_dict):
         result = ih.filter_keys(
@@ -474,6 +497,19 @@ class TestDictThings(object):
             },
         ]
 
+    def test_find_items_operator_sloppyequal_mixed(self, some_dicts2):
+        result = list(ih.find_items(some_dicts2, 'id:$23'))
+        assert result == [
+            {
+                'id': 'abc-12345',
+                'name': 'first',
+            },
+            {
+                'id': 'hij-12390',
+                'name': 'third',
+            },
+        ]
+
     def test_find_items_operator_sloppynotequal_str(self, some_dicts):
         result = list(ih.find_items(some_dicts, 'status:~run'))
         assert result == [
@@ -513,6 +549,19 @@ class TestDictThings(object):
                     'a': 10,
                     'b': 20
                 }
+            },
+        ]
+
+    def test_find_items_operator_sloppynotequal_mixed(self, some_dicts2):
+        result = list(ih.find_items(some_dicts2, 'id:~23'))
+        assert result == [
+            {
+                'id': 'def-67890',
+                'name': 'second',
+            },
+            {
+                'id': 'klm-789',
+                'name': 'fourth',
             },
         ]
 

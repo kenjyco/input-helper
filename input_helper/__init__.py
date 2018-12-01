@@ -51,6 +51,9 @@ def _sloppy_equal(x, y):
     if _type_x == str and _type_y == str:
         x = x.lower()
         y = y.lower()
+    elif _type_x == str and _type_y != str:
+        y = repr(y).lower()
+        _type_y = str
     if y == x or y in x:
         result = True
     return result
@@ -66,6 +69,9 @@ def _sloppy_not_equal(x, y):
     if _type_x == str and _type_y == str:
         x = x.lower()
         y = y.lower()
+    elif _type_x == str and _type_y != str:
+        y = repr(y).lower()
+        _type_y = str
     if y != x and y not in x:
         result = True
     return result
