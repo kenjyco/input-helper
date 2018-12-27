@@ -574,7 +574,7 @@ def get_selection_range_indices(start, stop):
 
 
 def make_selections(items, prompt='', wrap=True, item_format='', unbuffered=False,
-                    raise_interrupt=False, raise_exception_chars=[]):
+                    one=False, raise_interrupt=False, raise_exception_chars=[]):
     """Generate a menu from items, then return a subset of the items provided
 
     - items: list of strings, list of dicts, or list of tuples
@@ -584,6 +584,7 @@ def make_selections(items, prompt='', wrap=True, item_format='', unbuffered=Fals
     - unbuffered: if True, list of 1 item will be returned on key press
         - menu only displays first 62 items (since only 1 character of input
           is allowed.. 0-9, a-z, A-Z)
+    - one: if True, return first item selected (instead of a list)
     - raise_interrupt: if True and unbuffered is True, raise KeyboardInterrupt
       when ctrl+c is pressed
     - raise_exception_chars: list of characters that will raise a generic exception
@@ -655,6 +656,10 @@ def make_selections(items, prompt='', wrap=True, item_format='', unbuffered=Fals
                                     pass
                         else:
                             pass
+
+    if selected:
+        if one:
+            selected = selected[0]
     return selected
 
 
