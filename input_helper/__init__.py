@@ -3,6 +3,7 @@ import textwrap
 import tty
 import termios
 import string
+import keyword
 from datetime import timedelta
 from os.path import isfile
 from sys import stdin
@@ -174,6 +175,8 @@ def make_var_name(s):
     result = s.translate(TRANS_PUNC_TO_UNDERSCORE)
     result = result.strip().replace(' ', '_')
     if re.match('^[^_A-z]', result):
+        result = '_' + result
+    if result in keyword.kwlist:
         result = '_' + result
     return result
 
