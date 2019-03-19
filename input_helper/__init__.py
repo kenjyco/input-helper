@@ -674,6 +674,7 @@ def start_ipython(warn=False, **things):
     """
     try:
         from IPython import embed
+        from traitlets.config import get_config
     except ImportError:
         if warn:
             print('Could not find ipython. Try to install with: pip3 install ipython')
@@ -685,7 +686,9 @@ def start_ipython(warn=False, **things):
         pprint(things)
         print('\n------------------------------------------------------------\n')
         locals().update(things)
-    embed()
+    c = get_config()
+    c.InteractiveShellEmbed.colors = "Linux"
+    embed(config=c)
 
 
 def parse_command(input_line):
