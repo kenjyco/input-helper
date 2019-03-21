@@ -666,15 +666,17 @@ def make_selections(items, prompt='', wrap=True, item_format='', unbuffered=Fals
     return selected
 
 
-def start_ipython(warn=False, **things):
+def start_ipython(warn=False, colors=True, vi=True, **things):
     """Start an ipython session
 
     - warn: if True, and ipython is not found, print a message
+    - colors: if True, use shell colors
+    - vi: if True, use vi editing mode
     - things: any objects that should be available in the ipython session
     """
     try:
         from IPython import embed
-        from traitlets.config import get_config
+        from traitlets.config import Config
     except ImportError:
         if warn:
             print('Could not find ipython. Try to install with: pip3 install ipython')
@@ -686,8 +688,11 @@ def start_ipython(warn=False, **things):
         pprint(things)
         print('\n------------------------------------------------------------\n')
         locals().update(things)
-    c = get_config()
-    c.InteractiveShellEmbed.colors = "Linux"
+    c = Config()
+    if colors is True:
+        c.InteractiveShellEmbed.colors = "Linux"
+    if vi is True:
+        c.InteractiveShellEmbed.editing_mode = "vi"
     embed(config=c)
 
 
