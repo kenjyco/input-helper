@@ -401,6 +401,12 @@ def find_items(some_dicts, terms):
             yield(some_dict)
 
 
+def chunk_list(some_list, n):
+    """Return a generator with n-sized chunks of items in some_list"""
+    for i in range(0, len(some_list), n):
+        yield some_list[i:i + n]
+
+
 def get_string_maker(item_format='', missing_key_default=''):
     """Return a func that will create a string from a dict/tuple of data passed to it
 
