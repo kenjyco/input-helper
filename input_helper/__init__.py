@@ -112,6 +112,15 @@ def string_to_list(s):
     return [text for text in re.split(r'\s*[,;\|]\s*', s) if text]
 
 
+def string_to_converted_list(s):
+    """Return a list of derived items from s where items are separated by , ; |"""
+    result = []
+    if type(s) == str:
+        s = s.replace('\\n', '\n').replace('\\t', '\t')
+        result = list(map(from_string, string_to_list(s)))
+    return result
+
+
 def get_all_urls(*urls_or_filenames):
     """Return a list of all urls from objects that are urls or files of urls"""
     urls = []
