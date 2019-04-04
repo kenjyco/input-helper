@@ -8,7 +8,7 @@ from datetime import timedelta
 from os.path import isfile
 from sys import stdin
 from copy import deepcopy
-from collections import defaultdict
+from collections import defaultdict, Counter
 from input_helper import matcher
 
 
@@ -414,6 +414,22 @@ def chunk_list(some_list, n):
     """Return a generator with n-sized chunks of items in some_list"""
     for i in range(0, len(some_list), n):
         yield some_list[i:i + n]
+
+
+def unique_counted_items(items):
+    """Return list of unique items, prefixed by count, sorted by count
+
+    - items: list of hashable items (not dicts)
+    """
+    return [
+        (count, item)
+        for item, count in sorted(
+            Counter(items).items(),
+            key=lambda x: x[1],
+            reverse=True
+        )
+        if item
+    ]
 
 
 def get_string_maker(item_format='', missing_key_default=''):
