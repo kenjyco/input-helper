@@ -9,6 +9,7 @@ from os.path import isfile
 from sys import stdin
 from copy import deepcopy
 from collections import defaultdict, Counter
+from json import JSONDecoder, JSONDecodeError
 from input_helper import matcher
 
 
@@ -139,6 +140,38 @@ def get_all_urls(*urls_or_filenames):
                 urls.extend(matched['url_list'])
     return urls
 
+
+def yield_objs_from_json(json_text, pos=0, decoder=JSONDecoder()):
+    """Yield converted JSON objects for stacked JSON objects in a string or file
+
+    See: https://stackoverflow.com/a/50384432
+    """
+    NOT_WHITESPACE = re.compile(r'[^\s]')
+    if isfile(json_text):
+        with open(json_text, 'r') as fp:
+            json_text = fp.read()
+    while True:
+        match = NOT_WHITESPACE.search(json_text, pos)
+        if not match:
+            return
+        pos = match.start()
+
+        try:
+            obj, pos = decoder.raw_decode(json_text, pos)
+        except JSONDecodeError:
+            raise
+        yield obj
+
+def get_obj_from_json(json_text):
+    """Return converted JSON object for JSON object in a string or file
+
+    If there are stacked JSON objects in the string/file, only the first
+    is returned
+    """
+    res = yield_objs_from_json(json_text)
+    obj = next(res)
+    if obj:
+        return obj
 
 def from_string(val):
     """Return simple bool, None, int, and float values contained in a string
