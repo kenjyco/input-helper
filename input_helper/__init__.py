@@ -4,6 +4,7 @@ import tty
 import termios
 import string
 import keyword
+import warnings
 from datetime import timedelta
 from os.path import isfile
 from sys import stdin
@@ -11,6 +12,12 @@ from copy import deepcopy
 from collections import defaultdict, Counter
 from json import JSONDecoder, JSONDecodeError
 from input_helper import matcher
+try:
+    import xmljson
+    from xml.etree.ElementTree import fromstring
+except ImportError:
+    xmljson = None
+    fromstring = None
 
 
 RX_HMS = re.compile(r'^((?P<hours>\d+)h)?((?P<minutes>\d+)m)?((?P<seconds>\d+)s)?$')
@@ -162,6 +169,7 @@ def yield_objs_from_json(json_text, pos=0, decoder=JSONDecoder()):
             raise
         yield obj
 
+
 def get_obj_from_json(json_text):
     """Return converted JSON object for JSON object in a string or file
 
@@ -172,6 +180,32 @@ def get_obj_from_json(json_text):
     obj = next(res)
     if obj:
         return obj
+
+
+def get_obj_from_xml(xml_text, convention='BadgerFish', warn=True, **kwargs):
+    """Return an object from an XML string or file
+
+    - convention: an allowed type of xml parsing to do (from xmljson package)
+        - Abdera, BadgerFish, Cobra, GData, Parker, Yahoo
+    - warn: if True, issue a warning if xmljson package is not installed
+    - other kwargs are passed to the xmljson.<convention> init method
+        - dict_type=dict (to use a regular dict over default collections.OrderedDict
+        - invalid_tags='drop' (to drop any invalid tags)
+
+    See: https://github.com/sanand0/xmljson#conventions
+    """
+    if xmljson is None:
+        if warn:
+            warnings.warn('The "xmljson" package is not installed!')
+        return
+    if isfile(xml_text):
+        with open(xml_text, 'r') as fp:
+            xml_text = fp.read()
+    assert convention in ('Abdera', 'BadgerFish', 'Cobra', 'GData', 'Parker', 'Yahoo')
+    parser = getattr(xmljson, convention)(**kwargs)
+    obj = fromstring(xml_text)
+    return parser.data(obj)
+
 
 def from_string(val):
     """Return simple bool, None, int, and float values contained in a string
