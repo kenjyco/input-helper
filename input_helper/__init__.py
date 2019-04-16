@@ -214,6 +214,17 @@ def get_obj_from_xml(xml_text, convention='BadgerFish', warn=True, **kwargs):
     return parser.data(obj)
 
 
+def string_to_obj(s):
+    """Return a dict or list from a string representing JSON or XML
+
+    Wrapper to get_obj_from_json or get_obj_from_xml funcs
+    """
+    s = s.strip()
+    if s.startswith('<'):
+        return get_obj_from_xml(s)
+    return get_obj_from_json(s)
+
+
 def from_string(val):
     """Return simple bool, None, int, and float values contained in a string
 
