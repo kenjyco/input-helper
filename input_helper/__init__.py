@@ -11,6 +11,7 @@ from sys import stdin
 from copy import deepcopy
 from collections import defaultdict, Counter
 from json import JSONDecoder, JSONDecodeError
+from ast import literal_eval
 from input_helper import matcher
 try:
     import xmljson
@@ -165,8 +166,14 @@ def yield_objs_from_json(json_text, pos=0, decoder=JSONDecoder()):
 
         try:
             obj, pos = decoder.raw_decode(json_text, pos)
-        except JSONDecodeError:
-            raise
+        except JSONDecodeError as e:
+            try:
+                obj = literal_eval(json_text)
+            except:
+                raise e
+            else:
+                yield obj
+                break
         yield obj
 
 
