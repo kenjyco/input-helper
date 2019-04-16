@@ -154,6 +154,7 @@ def yield_objs_from_json(json_text, pos=0, decoder=JSONDecoder()):
 
     See: https://stackoverflow.com/a/50384432
     """
+    json_text = decode(json_text)
     NOT_WHITESPACE = re.compile(r'[^\s]')
     if isfile(json_text):
         with open(json_text, 'r') as fp:
@@ -205,6 +206,7 @@ def get_obj_from_xml(xml_text, convention='BadgerFish', warn=True, **kwargs):
         if warn:
             warnings.warn('The "xmljson" package is not installed!')
         return
+    xml_text = decode(xml_text)
     if isfile(xml_text):
         with open(xml_text, 'r') as fp:
             xml_text = fp.read()
@@ -219,7 +221,7 @@ def string_to_obj(s):
 
     Wrapper to get_obj_from_json or get_obj_from_xml funcs
     """
-    s = s.strip()
+    s = decode(s).strip()
     if s.startswith('<'):
         return get_obj_from_xml(s)
     return get_obj_from_json(s)
