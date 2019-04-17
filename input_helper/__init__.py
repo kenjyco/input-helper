@@ -24,6 +24,7 @@ except ImportError:
 RX_HMS = re.compile(r'^((?P<hours>\d+)h)?((?P<minutes>\d+)m)?((?P<seconds>\d+)s)?$')
 RX_COLON = re.compile(r'^((?P<hours>\d+):)?(?P<minutes>\d+):(?P<seconds>\d+)$')
 RX_NOT_WHITESPACE = re.compile(r'[^\s]')
+RX_ENCLOSING_B_SINGLE_QUOTE = re.compile(r"^b'(.*)'$")
 sm = matcher.SpecialTextMultiMatcher()
 um = matcher.UrlMatcher()
 cm = matcher.CurlyMatcher()
@@ -150,12 +151,28 @@ def get_all_urls(*urls_or_filenames):
     return urls
 
 
-def yield_objs_from_json(json_text, pos=0, decoder=JSONDecoder()):
+def _clean_obj_string_for_parsing(s):
+    """Return a "cleaned" string to be used in get_obj_from_[xml|json] funcs
+
+    Ensure that bytes are decoded into a string, trailing/leading whitespace is
+    removed, and that there is no enclosing 'b' with single quotes (around json)
+    """
+    s = decode(s).strip()
+    match = RX_ENCLOSING_B_SINGLE_QUOTE.match(s)
+    if match:
+        s = match.group(1)
+    return s
+
+
+def yield_objs_from_json(json_text, pos=0, decoder=JSONDecoder(), cleaned=False):
     """Yield converted JSON objects for stacked JSON objects in a string or file
+
+    - cleaned: if True, don't clean json_text with _clean_obj_string_for_parsing
 
     See: https://stackoverflow.com/a/50384432
     """
-    json_text = decode(json_text)
+    if not cleaned:
+        json_text = _clean_obj_string_for_parsing(json_text)
     if isfile(json_text):
         with open(json_text, 'r') as fp:
             json_text = fp.read()
@@ -178,24 +195,27 @@ def yield_objs_from_json(json_text, pos=0, decoder=JSONDecoder()):
         yield obj
 
 
-def get_obj_from_json(json_text):
+def get_obj_from_json(json_text, cleaned=False):
     """Return converted JSON object for JSON object in a string or file
+
+    - cleaned: if True, don't clean xml_text with _clean_obj_string_for_parsing
 
     If there are stacked JSON objects in the string/file, only the first
     is returned
     """
-    res = yield_objs_from_json(json_text)
+    res = yield_objs_from_json(json_text, cleaned=cleaned)
     obj = next(res)
     if obj:
         return obj
 
 
-def get_obj_from_xml(xml_text, convention='BadgerFish', warn=True, **kwargs):
+def get_obj_from_xml(xml_text, convention='BadgerFish', warn=True, cleaned=False, **kwargs):
     """Return an object from an XML string or file
 
     - convention: an allowed type of xml parsing to do (from xmljson package)
         - Abdera, BadgerFish, Cobra, GData, Parker, Yahoo
     - warn: if True, issue a warning if xmljson package is not installed
+    - cleaned: if True, don't clean xml_text with _clean_obj_string_for_parsing
     - other kwargs are passed to the xmljson.<convention> init method
         - dict_type=dict (to use a regular dict over default collections.OrderedDict
         - invalid_tags='drop' (to drop any invalid tags)
@@ -206,7 +226,8 @@ def get_obj_from_xml(xml_text, convention='BadgerFish', warn=True, **kwargs):
         if warn:
             warnings.warn('The "xmljson" package is not installed!')
         return
-    xml_text = decode(xml_text)
+    if not cleaned:
+        xml_text = _clean_obj_string_for_parsing(xml_text)
     if isfile(xml_text):
         with open(xml_text, 'r') as fp:
             xml_text = fp.read()
@@ -221,10 +242,10 @@ def string_to_obj(s):
 
     Wrapper to get_obj_from_json or get_obj_from_xml funcs
     """
-    s = decode(s).strip()
+    s = _clean_obj_string_for_parsing(s)
     if s.startswith('<'):
-        return get_obj_from_xml(s)
-    return get_obj_from_json(s)
+        return get_obj_from_xml(s, cleaned=True)
+    return get_obj_from_json(s, cleaned=True)
 
 
 def from_string(val):
