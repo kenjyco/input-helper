@@ -23,6 +23,7 @@ except ImportError:
 
 RX_HMS = re.compile(r'^((?P<hours>\d+)h)?((?P<minutes>\d+)m)?((?P<seconds>\d+)s)?$')
 RX_COLON = re.compile(r'^((?P<hours>\d+):)?(?P<minutes>\d+):(?P<seconds>\d+)$')
+RX_NOT_WHITESPACE = re.compile(r'[^\s]')
 sm = matcher.SpecialTextMultiMatcher()
 um = matcher.UrlMatcher()
 cm = matcher.CurlyMatcher()
@@ -155,12 +156,11 @@ def yield_objs_from_json(json_text, pos=0, decoder=JSONDecoder()):
     See: https://stackoverflow.com/a/50384432
     """
     json_text = decode(json_text)
-    NOT_WHITESPACE = re.compile(r'[^\s]')
     if isfile(json_text):
         with open(json_text, 'r') as fp:
             json_text = fp.read()
     while True:
-        match = NOT_WHITESPACE.search(json_text, pos)
+        match = RX_NOT_WHITESPACE.search(json_text, pos)
         if not match:
             return
         pos = match.start()
