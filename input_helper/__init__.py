@@ -15,10 +15,10 @@ from ast import literal_eval
 from input_helper import matcher
 try:
     import xmljson
-    from xml.etree.ElementTree import fromstring
+    from xml.etree.ElementTree import fromstring as xml_fromstring
 except ImportError:
     xmljson = None
-    fromstring = None
+    xml_fromstring = None
 
 
 RX_HMS = re.compile(r'^((?P<hours>\d+)h)?((?P<minutes>\d+)m)?((?P<seconds>\d+)s)?$')
@@ -212,7 +212,7 @@ def get_obj_from_xml(xml_text, convention='BadgerFish', warn=True, **kwargs):
             xml_text = fp.read()
     assert convention in ('Abdera', 'BadgerFish', 'Cobra', 'GData', 'Parker', 'Yahoo')
     parser = getattr(xmljson, convention)(**kwargs)
-    obj = fromstring(xml_text)
+    obj = xml_fromstring(xml_text)
     return parser.data(obj)
 
 
