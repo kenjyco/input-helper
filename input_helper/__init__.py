@@ -237,14 +237,17 @@ def get_obj_from_xml(xml_text, convention='BadgerFish', warn=True, cleaned=False
     return parser.data(obj)
 
 
-def string_to_obj(s):
+def string_to_obj(s, convention='BadgerFish', **kwargs):
     """Return a dict or list from a string representing JSON or XML
+
+    - convention: passed to get_obj_from_xml if s is xml
+    - kwargs: passed to get_obj_from_xml if s is xml
 
     Wrapper to get_obj_from_json or get_obj_from_xml funcs
     """
     s = _clean_obj_string_for_parsing(s)
     if s.startswith('<'):
-        return get_obj_from_xml(s, cleaned=True)
+        return get_obj_from_xml(s, cleaned=True, convention=convention, **kwargs)
     return get_obj_from_json(s, cleaned=True)
 
 
