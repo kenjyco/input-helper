@@ -93,6 +93,17 @@ def some_dicts2():
     return ds
 
 
+class TestMiscThings(object):
+    def test_get_list_from_arg_strings(self):
+        result = ih.get_list_from_arg_strings(
+            ['apple', 'cat', 'dog'],
+            'rat, mouse',
+            'orange',
+            'potato'
+        )
+        assert result == ['apple', 'cat', 'dog', 'rat', 'mouse', 'orange', 'potato']
+
+
 class TestDictThings(object):
     def test_filter_keys(self, some_dict):
         result = ih.filter_keys(
