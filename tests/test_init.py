@@ -97,7 +97,8 @@ class TestDictThings(object):
     def test_filter_keys(self, some_dict):
         result = ih.filter_keys(
             some_dict,
-            'Dogs, Cats, Birds.Value, Monkey.Thing.Value',
+            'Dogs, Cats, Birds.Value',
+            'Monkey.Thing.Value',
             Birds__Value=lambda x: x.get('Key') == 'Name',
             Cats=lambda x: x>10,
             Dogs=lambda x: x<5
@@ -113,9 +114,9 @@ class TestDictThings(object):
         result = ih.ignore_keys(
             some_dict,
             'Thing, Birds',
+            'Dogs',
         )
         assert result == {
-            'Dogs': [10, 3],
             'Cats': [2, 4, 8, 12, 19, 22],
             'Mice': {
                 'a': 5,

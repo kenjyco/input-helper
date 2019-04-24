@@ -132,6 +132,22 @@ def string_to_converted_list(s):
     return result
 
 
+def get_list_from_arg_strings(*args):
+    """Return a list of strings
+
+    - args: strings that may or may not be separated by one of , ; |
+    """
+    _args = []
+    for arg in args:
+        _type = type(arg)
+        if _type in (list, tuple):
+            for _arg in arg:
+                _args.extend(string_to_list(_arg))
+        elif _type == str:
+            _args.extend(string_to_list(arg))
+    return _args
+
+
 def get_all_urls(*urls_or_filenames):
     """Return a list of all urls from objects that are urls or files of urls"""
     urls = []
@@ -378,19 +394,11 @@ def ignore_keys(some_dict, *keys):
         - can also be a list of keys contained in a single string, separated
           by one of , ; |
     """
-    _keys = []
-    for key in keys:
-        _type = type(key)
-        if _type in (list, tuple):
-            for _key in key:
-                _keys.extend(string_to_list(_key))
-        elif _type == str:
-            _keys.extend(string_to_list(key))
-
+    keys = get_list_from_arg_strings(keys)
     data = {
         key: deepcopy(value)
         for key, value in some_dict.items()
-        if key not in _keys
+        if key not in keys
     }
     return data
 
@@ -411,17 +419,9 @@ def filter_keys(some_dict, *keys, **conditions):
         - if the value at the key is anything else, the result will be the value
           if the condition is met, or None
     """
-    _keys = []
-    for key in keys:
-        _type = type(key)
-        if _type in (list, tuple):
-            for _key in key:
-                _keys.extend(string_to_list(_key))
-        elif _type == str:
-            _keys.extend(string_to_list(key))
-
+    keys = get_list_from_arg_strings(keys)
     data = {}
-    for key in _keys:
+    for key in keys:
         key_dunder = key.replace('.', '__')
         condition = conditions.get(key_dunder)
         data[key_dunder] = get_value_at_key(some_dict, key, condition)
@@ -467,17 +467,9 @@ def sort_by_keys(some_dicts, *keys, reverse=False):
     - keys: a list of key names (simple names, NO nesting)
     - reverse: if True, reverse/descending order
     """
-    _keys = []
-    for key in keys:
-        _type = type(key)
-        if _type in (list, tuple):
-            for _key in key:
-                _keys.extend(string_to_list(_key))
-        elif _type == str:
-            _keys.extend(string_to_list(key))
-
+    keys = get_list_from_arg_strings(keys)
     some_dicts.sort(
-        key=lambda x: tuple([x.get(k) for k in _keys]),
+        key=lambda x: tuple([x.get(k) for k in keys]),
         reverse=reverse
     )
 
