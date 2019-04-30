@@ -115,12 +115,22 @@ RX_FIND_OPERATORS = re.compile(
 
 def string_to_set(s):
     """Return a set of strings from s where items are separated by any of , ; |"""
-    return set(re.split(r'\s*[,;\|]\s*', s)) - set([''])
+    try:
+        return set(re.split(r'\s*[,;\|]\s*', s)) - set([''])
+    except TypeError:
+        if type(s) == list:
+            return set(s)
+        raise
 
 
 def string_to_list(s):
     """Return a list of strings from s where items are separated by any of , ; |"""
-    return [text for text in re.split(r'\s*[,;\|]\s*', s) if text]
+    try:
+        return [text for text in re.split(r'\s*[,;\|]\s*', s) if text]
+    except TypeError:
+        if type(s) == list:
+            return s
+        raise
 
 
 def string_to_converted_list(s):
