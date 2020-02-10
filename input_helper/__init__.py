@@ -1,7 +1,5 @@
 import re
 import textwrap
-import tty
-import termios
 import string
 import keyword
 import warnings
@@ -19,6 +17,33 @@ try:
 except ImportError:
     xmljson = None
     xml_fromstring = None
+try:
+    import tty
+    import termios
+except ImportError:
+    try:
+        from click import getchar
+    except ModuleNotFoundError:
+        def getchar():
+            message = (
+                'This platform does not have termios/tty available.\n\n'
+                'Please install "click" package if you want to get unbuffered input.'
+            )
+            raise Exception(message)
+else:
+    def getchar():
+        """Get a character of input (unbuffrered) from stdin
+
+        See: http://code.activestate.com/recipes/134892/
+        """
+        fd = stdin.fileno()
+        old_settings = termios.tcgetattr(fd)
+        try:
+            tty.setraw(stdin.fileno())
+            ch = stdin.read(1)
+        finally:
+            termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
+        return ch
 
 
 RX_HMS = re.compile(r'^((?P<hours>\d+)h)?((?P<minutes>\d+)m)?((?P<seconds>\d+)s)?$')
@@ -661,21 +686,6 @@ def user_input_fancy(prompt_string='input', ch='> '):
     - ch: string appended to the main prompt_string
     """
     return sm(user_input(prompt_string, ch))
-
-
-def getchar():
-    """Get a character of input (unbuffrered) from stdin
-
-    See: http://code.activestate.com/recipes/134892/
-    """
-    fd = stdin.fileno()
-    old_settings = termios.tcgetattr(fd)
-    try:
-        tty.setraw(stdin.fileno())
-        ch = stdin.read(1)
-    finally:
-        termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
-    return ch
 
 
 def user_input_unbuffered(prompt_string='input', ch='> ', raise_interrupt=False):
