@@ -1,4 +1,0 @@
-# For development
-ipython
-pdbpp
-pytest
