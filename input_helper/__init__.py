@@ -78,47 +78,115 @@ NAME2CH = {v: k for k, v in CH2NAME.items()}
 TRANS_PUNC_TO_UNDERSCORE = str.maketrans(string.punctuation, '_' * len(string.punctuation))
 
 
+def _less_than(x, y):
+    """Return True if x < y"""
+    _x, _y = from_string(x), from_string(y)
+    try:
+        return _x < _y
+    except TypeError:
+        try:
+            return x < y
+        except TypeError:
+            pass
+        return False
+
+
+def _less_than_or_equal(x, y):
+    """Return True if x <= y"""
+    _x, _y = from_string(x), from_string(y)
+    try:
+        return _x <= _y
+    except TypeError:
+        try:
+            return x <= y
+        except TypeError:
+            pass
+        return False
+
+
+def _greater_than(x, y):
+    """Return True if x > y"""
+    _x, _y = from_string(x), from_string(y)
+    try:
+        return _x > _y
+    except TypeError:
+        try:
+            return x > y
+        except TypeError:
+            pass
+        return False
+
+
+def _greater_than_or_equal(x, y):
+    """Return True if x >= y"""
+    _x, _y = from_string(x), from_string(y)
+    try:
+        return _x >= _y
+    except TypeError:
+        try:
+            return x >= y
+        except TypeError:
+            pass
+        return False
+
+
 def _sloppy_equal(x, y):
-    """Return True if y is x, or is y is in x"""
+    """Return True if y is x, y is in x, or x is in y"""
     result = False
-    x = from_string(x)
-    y = from_string(y)
-    _type_x = type(x)
-    _type_y = type(y)
+    _x, _y = from_string(x), from_string(y)
+    if _x is None:
+        if _y is None:
+            return True
+        return False
+    _type_x = type(_x)
+    _type_y = type(_y)
     if _type_x == str and _type_y == str:
-        x = x.lower()
-        y = y.lower()
+        _x = _x.lower()
+        _y = _y.lower()
     elif _type_x == str and _type_y != str:
-        y = repr(y).lower()
+        _y = repr(_y).lower()
         _type_y = str
-    if y == x or y in x:
-        result = True
+    try:
+        if _y == _x or _y in _x or _x in _y:
+            result = True
+    except TypeError:
+        _x, _y = repr(_x).lower(), repr(_y).lower()
+        if _y == _x or _y in _x or _x in _y:
+            result = True
     return result
 
 
 def _sloppy_not_equal(x, y):
-    """Return True if y is not x and y is not in x"""
+    """Return True if y is not x and y is not in x and x is not in y"""
     result = False
-    x = from_string(x)
-    y = from_string(y)
-    _type_x = type(x)
-    _type_y = type(y)
+    _x, _y = from_string(x), from_string(y)
+    if _x is None:
+        if _y is None:
+            return False
+        return True
+    _type_x = type(_x)
+    _type_y = type(_y)
     if _type_x == str and _type_y == str:
-        x = x.lower()
-        y = y.lower()
+        _x = _x.lower()
+        _y = _y.lower()
     elif _type_x == str and _type_y != str:
-        y = repr(y).lower()
+        _y = repr(_y).lower()
         _type_y = str
-    if y != x and y not in x:
-        result = True
+    try:
+        if _y != _x and _y not in _x and _x not in _y:
+            result = True
+    except TypeError:
+        _x, _y = repr(_x).lower(), repr(_y).lower()
+        if _y != _x and _y not in _x and _x not in _y:
+            result = True
     return result
 
 
 FIND_OPERATORS = {
-    '<': lambda x, y: from_string(x) < from_string(y),
-    '<=': lambda x, y: from_string(x) <= from_string(y),
-    '>': lambda x, y: from_string(x) > from_string(y),
-    '>=': lambda x, y: from_string(x) >= from_string(y),
+    '<': _less_than,
+    '<=': _less_than_or_equal,
+    '>': _greater_than,
+    '>=': _greater_than_or_equal,
     '!': lambda x, y: from_string(x) != from_string(y),
     '!=': lambda x, y: from_string(x) != from_string(y),
     '==': lambda x, y: from_string(x) == from_string(y),
