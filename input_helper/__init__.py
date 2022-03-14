@@ -392,7 +392,8 @@ def from_string(val):
                 val = _val
             else:
                 if val.is_integer():
-                    val = int(val)
+                    if '.' not in _val:
+                        val = int(val)
         except ValueError:
             try:
                 val = int(val)

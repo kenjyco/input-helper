@@ -112,6 +112,51 @@ class TestMiscThings(object):
         assert result == ['apple', 'cat', 'dog', 'rat', 'mouse', 'orange', 'potato']
 
 
+class Test__from_string(object):
+    def test_none(self):
+        assert ih.from_string('none') is None
+        assert ih.from_string('None') is None
+        assert ih.from_string(None) is None
+
+    def test_bool(self):
+        assert ih.from_string('true') is True
+        assert ih.from_string('True') is True
+        assert ih.from_string('TRUE') is True
+        assert ih.from_string(True) is True
+        assert ih.from_string('false') is False
+        assert ih.from_string('False') is False
+        assert ih.from_string('FALSE') is False
+        assert ih.from_string(False) is False
+
+    def test_int(self):
+        value = ih.from_string('10')
+        assert type(value) == int
+        value = ih.from_string(10)
+        assert type(value) == int
+
+    def test_float(self):
+        value = ih.from_string('10.0')
+        assert type(value) == float
+        value = ih.from_string('10.0000')
+        assert type(value) == float
+        value = ih.from_string(10.0)
+        assert type(value) == float
+
+    def test_leading_zeroes_string(self):
+        assert type(ih.from_string('1')) == int
+        assert type(ih.from_string('.50')) == float
+        assert type(ih.from_string('0.50')) == str
+        assert type(ih.from_string('01')) == str
+        assert type(ih.from_string('00001')) == str
+        assert ih.from_string('00001') == '00001'
+
+    def test_object(self):
+        assert type(ih.from_string('{"a": 1, "b": 2}')) == str
+        assert type(ih.from_string({"a": 1, "b": 2})) == dict
+        assert type(ih.from_string('[1, 2]')) == str
+        assert type(ih.from_string([1, 2])) == list
+
+
 class TestCompareThings(object):
     def test_less_num(self):
         assert ih._less_than(5, 6)
