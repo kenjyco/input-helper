@@ -888,7 +888,7 @@ def make_selections(items, prompt='', wrap=True, item_format='', unbuffered=Fals
     return selected
 
 
-def start_ipython(warn=False, colors=True, vi=True, **things):
+def start_ipython(warn=True, colors=True, vi=True, **things):
     """Start an ipython session
 
     - warn: if True, and ipython is not found, print a message
