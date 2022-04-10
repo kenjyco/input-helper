@@ -42,7 +42,7 @@ setup(
         'Topic :: System :: Shells',
         'Topic :: Text Processing :: Filters',
         'Topic :: Text Processing :: General',
-        'Topic :: Text Processing :: XML',
+        'Topic :: Text Processing :: Markup :: XML',
         'Topic :: Utilities',
     ],
     keywords=['input', 'user input', 'regex', 'matching', 'json', 'selection', 'menus', 'filtering', 'conversions', 'transformations', 'comparisons', 'cli', 'command-line', 'helper', 'kenjyco']
