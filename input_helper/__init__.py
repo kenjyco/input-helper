@@ -2,7 +2,6 @@ import re
 import textwrap
 import string
 import keyword
-import warnings
 from datetime import timedelta
 from os.path import isfile
 from sys import stdin
@@ -333,7 +332,7 @@ def get_obj_from_xml(xml_text, convention='BadgerFish', warn=True, cleaned=False
 
     - convention: an allowed type of xml parsing to do (from xmljson package)
         - Abdera, BadgerFish, Cobra, GData, Parker, Yahoo
-    - warn: if True, issue a warning if xmljson package is not installed
+    - warn: if True, and xmljson is not found, print a message
     - cleaned: if True, don't clean xml_text with _clean_obj_string_for_parsing
     - other kwargs are passed to the xmljson.<convention> init method
         - dict_type=dict (to use a regular dict over default collections.OrderedDict
@@ -343,7 +342,7 @@ def get_obj_from_xml(xml_text, convention='BadgerFish', warn=True, cleaned=False
     """
     if xmljson is None:
         if warn:
-            warnings.warn('The "xmljson" package is not installed!')
+            print('Could not find xmljson. Try to install with: pip3 install xmljson')
         return
     if not cleaned:
         xml_text = _clean_obj_string_for_parsing(xml_text)
