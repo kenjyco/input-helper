@@ -13,7 +13,7 @@ with open('requirements-xmljson.txt', 'r') as fp:
 setup(
     name='input-helper',
     version='0.1.41',
-    description='Common CLI input helper functions and string/arg conversions',
+    description='Helpers for parsing user input, generating menus, transforming data, making comparisons, flexible argument acceptance (string to list/set), regex matching, and more',
     long_description=long_description,
     author='Ken',
     author_email='kenjyco@gmail.com',
@@ -29,13 +29,21 @@ setup(
     setup_requires=['pytest-runner'],
     tests_require=['pytest'],
     classifiers=[
-        'Development Status :: 3 - Alpha',
+        'Development Status :: 4 - Beta',
         'Environment :: Console',
-        'License :: OSI Approved :: MIT License',
-        'Programming Language :: Python',
-        'Programming Language :: Python :: 3.5',
-        'Topic :: Software Development :: Libraries',
+        'Framework :: IPython',
         'Intended Audience :: Developers',
+        'License :: OSI Approved :: MIT License',
+        'Operating System :: MacOS :: MacOS X',
+        'Operating System :: POSIX :: Linux',
+        'Programming Language :: Python :: 3.5',
+        'Programming Language :: Python',
+        'Topic :: Software Development :: Libraries',
+        'Topic :: System :: Shells',
+        'Topic :: Text Processing :: Filters',
+        'Topic :: Text Processing :: General',
+        'Topic :: Text Processing :: XML',
+        'Topic :: Utilities',
     ],
-    keywords=['input', 'cli', 'helper']
+    keywords=['input', 'user input', 'regex', 'matching', 'json', 'selection', 'menus', 'filtering', 'conversions', 'transformations', 'comparisons', 'cli', 'command-line', 'helper', 'kenjyco']
 )
