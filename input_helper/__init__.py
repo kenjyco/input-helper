@@ -49,6 +49,8 @@ RX_HMS = re.compile(r'^((?P<hours>\d+)h)?((?P<minutes>\d+)m)?((?P<seconds>\d+)s)
 RX_COLON = re.compile(r'^((?P<hours>\d+):)?(?P<minutes>\d+):(?P<seconds>\d+)$')
 RX_NOT_WHITESPACE = re.compile(r'[^\s]')
 RX_ENCLOSING_B_SINGLE_QUOTE = re.compile(r"^b'(.*)'$")
+RX_NEWLINE = re.compile(r'\r?\n')
+RX_NEWLINE_LEADING_SPACE = re.compile(r'\r?\n\s*')
 sm = matcher.SpecialTextMultiMatcher()
 um = matcher.UrlMatcher()
 cm = matcher.CurlyMatcher()
@@ -203,6 +205,33 @@ RX_FIND_OPERATORS = re.compile(
     ]) +
     ')+(?P<value>.*)'
 )
+
+
+def splitlines(s):
+    """Return a list of strings from s where items are separated by newline
+
+    There will be no empty strings
+    """
+    return [
+        line
+        for line in RX_NEWLINE.split(s)
+        if line
+    ]
+
+
+def splitlines_and_strip(s):
+    """Return a list of strings from s where items are separated by newline
+
+    Each string returned will have no leading/trailing whitespace and there
+    will be no empty strings
+    """
+    results = []
+    for line in RX_NEWLINE_LEADING_SPACE.split(s):
+        line = line.strip()
+        if line:
+            results.append(line)
+
+    return results
 
 
 def string_to_set(s):
