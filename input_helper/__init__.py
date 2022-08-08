@@ -45,6 +45,9 @@ else:
         return ch
 
 
+SECONDS_IN_HOUR = 60 * 60
+SECONDS_IN_DAY = SECONDS_IN_HOUR * 24
+SECONDS_IN_WEEK = SECONDS_IN_DAY * 7
 RX_HMS = re.compile(r'^((?P<hours>\d+)h)?((?P<minutes>\d+)m)?((?P<seconds>\d+)s)?$')
 RX_COLON = re.compile(r'^((?P<hours>\d+):)?(?P<minutes>\d+):(?P<seconds>\d+)$')
 RX_NOT_WHITESPACE = re.compile(r'[^\s]')
@@ -746,7 +749,7 @@ def timestamp_to_seconds(timestamp):
 
 
 def seconds_to_timestamps(seconds):
-    """Return a dict of timestamp strings for the given numnber of seconds"""
+    """Return a dict of timestamp strings for the given number of seconds"""
     m, s = divmod(seconds, 60)
     h, m = divmod(m, 60)
     hms_parts = []
@@ -757,9 +760,36 @@ def seconds_to_timestamps(seconds):
     if s:
         hms_parts.append('{}s'.format(s))
 
+    pretty_parts = []
+    weeks, seconds = divmod(seconds, SECONDS_IN_WEEK)
+    if weeks > 0:
+        part = '{} '.format(int(weeks))
+        part += 'week' if weeks == 1 else 'weeks'
+        pretty_parts.append(part)
+    days, seconds = divmod(seconds, SECONDS_IN_DAY)
+    if days > 0:
+        part = '{} '.format(int(days))
+        part += 'day' if days == 1 else 'days'
+        pretty_parts.append(part)
+    hours, seconds = divmod(seconds, SECONDS_IN_HOUR)
+    if hours > 0:
+        part = '{} '.format(int(hours))
+        part += 'hour' if hours == 1 else 'hours'
+        pretty_parts.append(part)
+    minutes, seconds = divmod(seconds, 60)
+    if minutes > 0:
+        part = '{} '.format(int(minutes))
+        part += 'minute' if minutes == 1 else 'minutes'
+        pretty_parts.append(part)
+    if seconds > 0:
+        part = '{} '.format(seconds)
+        part += 'second' if seconds == 1 else 'seconds'
+        pretty_parts.append(part)
+
     return {
         'colon': '{:02}:{:02}:{:02}'.format(h, m, s),
-        'hms': ''.join(hms_parts)
+        'hms': ''.join(hms_parts),
+        'pretty': ', '.join(pretty_parts)
     }
 
 
