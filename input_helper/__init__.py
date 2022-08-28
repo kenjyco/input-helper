@@ -13,16 +13,16 @@ from input_helper import matcher
 try:
     import xmljson
     from xml.etree.ElementTree import fromstring as xml_fromstring
-except ImportError:
+except (ImportError, ModuleNotFoundError):
     xmljson = None
     xml_fromstring = None
 try:
     import tty
     import termios
-except ImportError:
+except (ImportError, ModuleNotFoundError):
     try:
         from click import getchar
-    except ModuleNotFoundError:
+    except (ImportError, ModuleNotFoundError):
         def getchar():
             message = (
                 'This platform does not have termios/tty available.\n\n'
@@ -958,7 +958,7 @@ def start_ipython(warn=True, colors=True, vi=True, **things):
     try:
         from IPython import embed
         from traitlets.config import Config
-    except ImportError:
+    except (ImportError, ModuleNotFoundError):
         if warn:
             print('Could not find ipython. Try to install with: pip3 install ipython')
         return
