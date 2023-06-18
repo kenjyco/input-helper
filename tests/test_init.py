@@ -877,3 +877,45 @@ class TestDictThings(object):
                 }
             },
         ]
+
+
+class TestTimestamps(object):
+    def test_seconds_to_timestamps1(self):
+        timestamps = ih.seconds_to_timestamps(10)
+        assert timestamps == {
+            'colon': '00:00:10',
+            'hms': '10s',
+            'pretty': '10 seconds'
+        }
+
+    def test_seconds_to_timestamps2(self):
+        timestamps = ih.seconds_to_timestamps(100)
+        assert timestamps == {
+            'colon': '00:01:40',
+            'hms': '1m40s',
+            'pretty': '1 minute, 40 seconds'
+        }
+
+    def test_seconds_to_timestamps3(self):
+        timestamps = ih.seconds_to_timestamps(10000)
+        assert timestamps == {
+            'colon': '02:46:40',
+            'hms': '2h46m40s',
+            'pretty': '2 hours, 46 minutes, 40 seconds'
+        }
+
+    def test_seconds_to_timestamps4(self):
+        timestamps = ih.seconds_to_timestamps(1000000)
+        assert timestamps == {
+            'colon': '277:46:40',
+            'hms': '277h46m40s',
+            'pretty': '1 week, 4 days, 13 hours, 46 minutes, 40 seconds'
+        }
+
+    def test_seconds_to_timestamps5(self):
+        timestamps = ih.seconds_to_timestamps(12345.6789)
+        assert timestamps == {
+            'colon': '03:25:46',
+            'hms': '3h25m46s',
+            'pretty': '3 hours, 25 minutes, 45.679 seconds'
+        }

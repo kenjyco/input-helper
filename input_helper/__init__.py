@@ -754,10 +754,17 @@ def seconds_to_timestamps(seconds):
     h, m = divmod(m, 60)
     hms_parts = []
     if h:
+        h = int(h)
         hms_parts.append('{}h'.format(h))
+    else:
+        h = 0
     if m:
+        m = int(m)
         hms_parts.append('{}m'.format(m))
+    else:
+        m = 0
     if s:
+        s = round(s)
         hms_parts.append('{}s'.format(s))
 
     pretty_parts = []
@@ -782,6 +789,7 @@ def seconds_to_timestamps(seconds):
         part += 'minute' if minutes == 1 else 'minutes'
         pretty_parts.append(part)
     if seconds > 0:
+        seconds = round(seconds, 3)
         part = '{} '.format(seconds)
         part += 'second' if seconds == 1 else 'seconds'
         pretty_parts.append(part)
