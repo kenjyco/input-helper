@@ -955,12 +955,14 @@ def make_selections(items, prompt='', wrap=True, item_format='', unbuffered=Fals
     return selected
 
 
-def start_ipython(warn=True, colors=True, vi=True, **things):
+def start_ipython(warn=True, colors=True, vi=True, confirm_exit=False, **things):
     """Start an ipython session
 
     - warn: if True, and ipython is not found, print a message
     - colors: if True, use shell colors
     - vi: if True, use vi editing mode
+    - confirm_exit: if True, prompt "Do you really want to exit ([y]/n)?" when
+      exiting the shell
     - things: any objects that should be available in the ipython session
     """
     try:
@@ -982,6 +984,8 @@ def start_ipython(warn=True, colors=True, vi=True, **things):
         c.InteractiveShellEmbed.colors = "Linux"
     if vi is True:
         c.InteractiveShellEmbed.editing_mode = "vi"
+    if confirm_exit is False:
+        c.InteractiveShellEmbed.confirm_exit = False
     embed(config=c)
 
 
