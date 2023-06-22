@@ -3,8 +3,8 @@ from input_helper.matcher import (
     LeadingSpacesMatcher, DoubleQuoteMatcher, SingleQuoteMatcher,
     BacktickMatcher, MentionMatcher, TagMatcher, CommentMatcher,
     CapitalizedPhraseMatcher, AllCapsPhraseMatcher, CurlyMatcher, ParenMatcher,
-    DollarCommandMatcher, UrlDetailsMatcher, UrlMatcher, NonUrlTextMatcher,
-    ScrotFileMatcher, ScrotFileMatcher2, FehSaveFileMatcher,
+    DollarCommandMatcher, DatetimeMatcher, UrlDetailsMatcher, UrlMatcher,
+    NonUrlTextMatcher, ScrotFileMatcher, ScrotFileMatcher2, FehSaveFileMatcher,
     PsOutputMatcher, ZshHistoryLineMatcher,
     SpecialTextMultiMatcher, MasterMatcher,
 )
@@ -185,6 +185,20 @@ class TestDollarCommandMatcher(object):
         dcm = DollarCommandMatcher()
         result = dcm(line)
         assert result == {'command_group_list': ['google "python regular expression"']}
+
+
+class TestDatetimeMatcher(object):
+    def test_multiple(self):
+        line = '...2020-01-01 01:30:00.1234 is one and 2023-04-05 is another one'
+        dtm = DatetimeMatcher()
+        result = dtm(line)
+        assert result == {'datetime_list': ['2020-01-01 01:30:00.1234', '2023-04-05']}
+
+    def test_with_non_matches(self):
+        line = '1999, 10000, and 2023-06'
+        dtm = DatetimeMatcher()
+        result = dtm(line)
+        assert result == {'datetime_list': ['1999', '2023-06']}
 
 
 class TestUrlDetailsMatcher(object):

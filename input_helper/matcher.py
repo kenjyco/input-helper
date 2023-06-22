@@ -220,6 +220,24 @@ class DollarCommandMatcher(Matcher):
     rx_iter = re.compile(r'(^|\s)\$\((?P<command_group>[^\)]+)\)')
 
 
+class DatetimeMatcher(Matcher):
+    """Match ISO 8691 formatted datetimes 'YYYY' to 'YYYY-MM-DD HH:MM:SS.f'
+
+    See: https://www.iso.org/iso-8601-date-and-time-format.html
+    """
+    rx_iter = re.compile(r"""
+        (^|\s|\b)(?P<datetime>
+            \d{4}\-\d{2}\-\d{2}\s\d{2}:\d{2}:\d{2}\.\d+|
+            \d{4}\-\d{2}\-\d{2}\s\d{2}:\d{2}:\d{2}|
+            \d{4}\-\d{2}\-\d{2}\s\d{2}:\d{2}|
+            \d{4}\-\d{2}\-\d{2}\s\d{2}|
+            \d{4}\-\d{2}\-\d{2}|
+            \d{4}\-\d{2}|
+            \d{4}
+        )(\s|\b|$)
+        """, re.VERBOSE)
+
+
 class _UrlDetailsMatcher(Matcher):
     """Match a URL and split into details
 
