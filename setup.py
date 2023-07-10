@@ -12,14 +12,14 @@ with open('requirements-xmljson.txt', 'r') as fp:
 
 setup(
     name='input-helper',
-    version='0.1.45',
+    version='0.1.46',
     description='Helpers for parsing user input, generating menus, transforming data, making comparisons, flexible argument acceptance (string to list/set), regex matching, and more',
     long_description=long_description,
     author='Ken',
     author_email='kenjyco@gmail.com',
     license='MIT',
     url='https://github.com/kenjyco/input-helper',
-    download_url='https://github.com/kenjyco/input-helper/tarball/v0.1.45',
+    download_url='https://github.com/kenjyco/input-helper/tarball/v0.1.46',
     packages=find_packages(),
     extras_require={
         'ipython': requirements_ipython,
