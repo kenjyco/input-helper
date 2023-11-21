@@ -1,16 +1,16 @@
-import re
-import textwrap
-import string
 import keyword
+import re
+import string
+import textwrap
+from ast import literal_eval
+from collections import defaultdict, Counter
+from copy import deepcopy
 from datetime import timedelta
 from fnmatch import fnmatch
+from input_helper import matcher
+from json import JSONDecoder, JSONDecodeError
 from os.path import isfile
 from sys import stdin
-from copy import deepcopy
-from collections import defaultdict, Counter
-from json import JSONDecoder, JSONDecodeError
-from ast import literal_eval
-from input_helper import matcher
 try:
     import xmljson
     from xml.etree.ElementTree import fromstring as xml_fromstring
