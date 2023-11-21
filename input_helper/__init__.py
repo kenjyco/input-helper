@@ -3,6 +3,7 @@ import textwrap
 import string
 import keyword
 from datetime import timedelta
+from fnmatch import fnmatch
 from os.path import isfile
 from sys import stdin
 from copy import deepcopy
@@ -536,6 +537,36 @@ def ignore_keys(some_dict, *keys):
         if key not in keys
     }
     return data
+
+
+def flatten_and_ignore_keys(some_dict, *keys):
+    """Return a flattened dict with all keys except the specified ignore keys
+
+    - some_dict: a dict object that may contain other dicts and lists
+    - keys: a list of key names or shell-glob style key patterns
+        - nested keynames are supported (i.e. 'person.address.zipcode')
+        - can also be a list of keys contained in a single string, separated
+          by one of , ; |
+        - shell-glob patterns supported include '*' to match everything, '?' to
+          match a single character, and '[..]' to match specific characters and
+          character ranges (when 2 chars are separated by '-' in the range)
+    """
+    keys = get_list_from_arg_strings(keys)
+
+    def _flatten(current_dict, parent_key='', result=None):
+        if result is None:
+            result = {}
+
+        for k, v in current_dict.items():
+            new_key = f"{parent_key}.{k}" if parent_key else k
+            if not any(fnmatch(new_key, pattern) for pattern in keys):
+                if isinstance(v, dict):
+                    _flatten(v, new_key, result)
+                else:
+                    result[new_key] = deepcopy(v)
+        return result
+
+    return _flatten(some_dict)
 
 
 def filter_keys(some_dict, *keys, **conditions):

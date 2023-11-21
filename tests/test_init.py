@@ -24,6 +24,33 @@ def some_dict():
 
 
 @pytest.fixture
+def some_dict2():
+    d = {
+        'order': {
+            'id': 12345,
+            'details': {
+                'price': 99.99,
+                'productDescription': 'Latest model smartphone with advanced features',
+                'productID': 'E1234',
+                'productName': 'Smartphone',
+                'productType': 'Electronics',
+                'promoCode': 'DISCOUNT20',
+                'quantity': 1
+            }
+        },
+        'user': {
+            'address': {
+                'city': 'New York',
+                'zipcode': '10001'
+            },
+            'name': 'John Doe'
+        },
+        'user_ok': True
+    }
+    return d
+
+
+@pytest.fixture
 def some_dicts():
     ds = [
         {
@@ -335,6 +362,60 @@ class TestDictThings(object):
                 'c': [1, 2, 3]
             }
         }
+
+    def test_flatten_and_ignore_keys__flatten_only(self, some_dict):
+        result = ih.flatten_and_ignore_keys(some_dict)
+        assert sorted(result.keys()) == [
+            'Birds', 'Cats', 'Dogs', 'Mice.a', 'Mice.b', 'Mice.c', 'Thing'
+        ]
+        assert result['Birds'][-1]['Value'] == 'Another bird'
+
+    def test_flatten_and_ignore_keys__with_ignore_keys(self, some_dict):
+        result = ih.flatten_and_ignore_keys(some_dict, 'Thing, Birds, Mice.c, Fake')
+        assert sorted(result.keys()) == ['Cats', 'Dogs', 'Mice.a', 'Mice.b']
+
+    def test_flatten_and_ignore_keys__with_ignore_patterns(self, some_dict2):
+        assert sorted(ih.flatten_and_ignore_keys(some_dict2).keys()) == [
+            'order.details.price', 'order.details.productDescription',
+            'order.details.productID', 'order.details.productName',
+            'order.details.productType', 'order.details.promoCode',
+            'order.details.quantity', 'order.id', 'user.address.city',
+            'user.address.zipcode', 'user.name', 'user_ok'
+        ]
+
+        result = ih.flatten_and_ignore_keys(some_dict2, 'order.details.prod*')
+        assert sorted(result.keys()) == [
+            'order.details.price', 'order.details.promoCode',
+            'order.details.quantity', 'order.id', 'user.address.city',
+            'user.address.zipcode', 'user.name', 'user_ok'
+        ]
+
+        result2 = ih.flatten_and_ignore_keys(some_dict2, 'order.details.product[TI]*, user.add*')
+        assert sorted(result2.keys()) == [
+            'order.details.price', 'order.details.productDescription',
+            'order.details.productName', 'order.details.promoCode',
+            'order.details.quantity', 'order.id', 'user.name', 'user_ok'
+        ]
+
+        result3 = ih.flatten_and_ignore_keys(some_dict2, 'order.details.product[TI]*, user.*')
+        assert sorted(result3.keys()) == [
+            'order.details.price', 'order.details.productDescription',
+            'order.details.productName', 'order.details.promoCode',
+            'order.details.quantity', 'order.id', 'user_ok'
+        ]
+
+        result4 = ih.flatten_and_ignore_keys(some_dict2, 'order.details.product[TI]*, order.*product???e, us*')
+        assert sorted(result4.keys()) == [
+            'order.details.price', 'order.details.productDescription',
+            'order.details.promoCode', 'order.details.quantity', 'order.id'
+        ]
+
+        result5 = ih.flatten_and_ignore_keys(some_dict2, 'order.details.product[J-Z]*, user*')
+        assert sorted(result5.keys()) == [
+            'order.details.price', 'order.details.productDescription',
+            'order.details.productID', 'order.details.promoCode',
+            'order.details.quantity', 'order.id'
+        ]
 
     def test_find_items_simple(self, some_dicts):
         result = list(ih.find_items(some_dicts, 'thing.a:10'))
