@@ -417,6 +417,26 @@ class TestDictThings(object):
             'order.details.quantity', 'order.id'
         ]
 
+    def test_unflatten_keys(self, some_dict2):
+        flattened = ih.flatten_and_ignore_keys(some_dict2, 'order.details.product[TI]*, user.add*')
+        result = ih.unflatten_keys(flattened)
+        assert result == {
+            'order': {
+                'details': {
+                    'price': 99.99,
+                    'productDescription': 'Latest model smartphone with advanced features',
+                    'productName': 'Smartphone',
+                    'promoCode': 'DISCOUNT20',
+                    'quantity': 1
+                },
+                'id': 12345
+            },
+            'user': {
+                'name': 'John Doe'
+            },
+            'user_ok': True
+        }
+
     def test_find_items_simple(self, some_dicts):
         result = list(ih.find_items(some_dicts, 'thing.a:10'))
         assert result == [

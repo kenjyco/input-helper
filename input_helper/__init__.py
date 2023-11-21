@@ -569,6 +569,29 @@ def flatten_and_ignore_keys(some_dict, *keys):
     return _flatten(some_dict)
 
 
+def unflatten_keys(flat_dict):
+    """Return a dict with un-nested key names and nested dicts where appropriate
+
+    - flat_dict: a dict object containing no nested dicts, where nested keynames
+      are supported (i.e. 'person.address.zipcode')
+    """
+    data = {}
+
+    for compound_key, value in flat_dict.items():
+        keys = compound_key.split('.')
+        current_level = data
+
+        for i, key in enumerate(keys):
+            if i == len(keys) - 1:
+                current_level[key] = value
+            else:
+                if key not in current_level:
+                    current_level[key] = {}
+                current_level = current_level[key]
+
+    return data
+
+
 def filter_keys(some_dict, *keys, **conditions):
     """Return a dict with only the specified keys and values returned
 
