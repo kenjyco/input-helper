@@ -152,8 +152,11 @@ class Test__string_to_version_tuple(object):
     def test_with_patch2(self):
         assert ih.string_to_version_tuple('0.5.3a') == (0.5, '3a')
 
-    def test_with_patch2(self):
+    def test_with_patch3(self):
         assert ih.string_to_version_tuple('8.5.4-rc1') == (8.5, '4-rc1')
+
+    def test_with_patch4(self):
+        assert ih.string_to_version_tuple('2.0.5.post1') == (2.0, '5.post1')
 
 
 class Test__from_string(object):
