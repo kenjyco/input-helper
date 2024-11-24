@@ -139,6 +139,23 @@ class TestMiscThings(object):
         assert result == ['apple', 'cat', 'dog', 'rat', 'mouse', 'orange', 'potato']
 
 
+class Test__string_to_version_tuple(object):
+    def test_no_patch1(self):
+        assert ih.string_to_version_tuple('0.4') == (0.4, '')
+
+    def test_no_patch2(self):
+        assert ih.string_to_version_tuple('10.5') == (10.5, '')
+
+    def test_with_patch1(self):
+        assert ih.string_to_version_tuple('10.5.2') == (10.5, '2')
+
+    def test_with_patch2(self):
+        assert ih.string_to_version_tuple('0.5.3a') == (0.5, '3a')
+
+    def test_with_patch2(self):
+        assert ih.string_to_version_tuple('8.5.4-rc1') == (8.5, '4-rc1')
+
+
 class Test__from_string(object):
     def test_none(self):
         assert ih.from_string('none') is None

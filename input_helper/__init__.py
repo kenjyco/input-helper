@@ -402,6 +402,14 @@ def string_to_obj(s, convention='BadgerFish', **kwargs):
     return get_obj_from_json(s, cleaned=True)
 
 
+def string_to_version_tuple(s):
+    """Return a tuple from a version string (major.minor float, patch string)"""
+    major, minor, *patch = s.split('.')
+    major_minor_float = float('{}.{}'.format(major, minor))
+    patch = patch[0] if patch else ''
+    return (major_minor_float, patch)
+
+
 def from_string(val):
     """Return simple bool, None, int, and float values contained in a string
 
