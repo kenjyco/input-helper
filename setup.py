@@ -26,8 +26,8 @@ setup(
         'xmljson': requirements_xmljson,
         'full': requirements_ipython + requirements_xmljson,
     },
-    setup_requires=['pytest-runner'],
-    tests_require=['pytest'],
+    # setup_requires=['pytest-runner'],
+    # tests_require=['pytest'],
     classifiers=[
         'Development Status :: 4 - Beta',
         'Environment :: Console',
