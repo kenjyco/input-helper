@@ -566,7 +566,7 @@ def flatten_and_ignore_keys(some_dict, *keys):
             result = {}
 
         for k, v in current_dict.items():
-            new_key = f"{parent_key}.{k}" if parent_key else k
+            new_key = '{}.{}'.format(parent_key, k) if parent_key else k
             if not any(fnmatch(new_key, pattern) for pattern in keys):
                 if isinstance(v, dict):
                     _flatten(v, new_key, result)
