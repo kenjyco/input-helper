@@ -410,11 +410,11 @@ def string_to_obj(s, convention='BadgerFish', **kwargs):
 
 
 def string_to_version_tuple(s):
-    """Return a tuple from a version string (major.minor float, patch string)"""
+    """Return a tuple from a version string (major int, minor int, patch string)"""
     major, minor, *patch = s.split('.')
     major_minor_float = float('{}.{}'.format(major, minor))
     patch = '.'.join(patch) if patch else ''
-    return (major_minor_float, patch)
+    return (int(major), int(minor), patch)
 
 
 def from_string(val):
