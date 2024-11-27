@@ -204,6 +204,24 @@ class Test__from_string(object):
         assert type(ih.from_string([1, 2])) == list
 
 
+class Test__get_list_from_arg_strings(object):
+    def test_single_arg1(self):
+        result = ih.get_list_from_arg_strings('dog')
+        assert result == ['dog']
+
+    def test_single_arg2(self):
+        result = ih.get_list_from_arg_strings(['dog', 'cat', 3])
+        assert result == ['dog', 'cat', '3']
+
+    def test_single_arg3(self):
+        result = ih.get_list_from_arg_strings('dog, cat, mouse')
+        assert result == ['dog', 'cat', 'mouse']
+
+    def test_nested_with_non_strings(self):
+        result = ih.get_list_from_arg_strings(100, 400, [1, 2, 3, ['04', '05']])
+        assert result == ['100', '400', '1', '2', '3', '04', '05']
+
+
 class TestCompareThings(object):
     def test_less_num(self):
         assert ih._less_than(5, 6)

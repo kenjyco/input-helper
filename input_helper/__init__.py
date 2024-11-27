@@ -275,11 +275,13 @@ def get_list_from_arg_strings(*args):
     _args = []
     for arg in args:
         _type = type(arg)
-        if _type in (list, tuple):
-            for _arg in arg:
-                _args.extend(string_to_list(_arg))
-        elif _type == str:
+        if _type == str:
             _args.extend(string_to_list(arg))
+        elif hasattr(arg, '__iter__'):
+            for _arg in arg:
+                _args.extend(get_list_from_arg_strings(_arg))
+        else:
+            _args.extend(string_to_list(str(arg)))
     return _args
 
 
