@@ -12,6 +12,11 @@ from json import JSONDecoder, JSONDecodeError
 from os.path import isfile
 from sys import stdin
 try:
+    ModuleNotFoundError
+except NameError:
+    class ModuleNotFoundError(ImportError):
+        pass
+try:
     import xmljson
     from xml.etree.ElementTree import fromstring as xml_fromstring
 except (ImportError, ModuleNotFoundError):
