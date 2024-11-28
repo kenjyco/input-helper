@@ -195,7 +195,9 @@ class Test__from_string(object):
     def test_leading_zeroes_string(self):
         assert type(ih.from_string('1')) == int
         assert type(ih.from_string('.50')) == float
-        assert type(ih.from_string('0.50')) == str
+        assert type(ih.from_string('0.50')) == float
+        assert type(ih.from_string('00.50')) == str
+        assert type(ih.from_string('0.5.0')) == str
         assert type(ih.from_string('01')) == str
         assert type(ih.from_string('00001')) == str
         assert ih.from_string('00001') == '00001'

@@ -422,6 +422,9 @@ def from_string(val):
 
     Useful for converting items in config files parsed by
     `configparser.RawConfigParser()` or values pulled from Redis
+
+    Number strings with a leading "0", (except for leading "0." that happens to
+    be a valid float) will be kept as strings
     """
     _val = val
     if type(val) != str:
@@ -435,7 +438,7 @@ def from_string(val):
     else:
         try:
             val = float(val)
-            if _val.startswith('0') and len(_val) > 1:
+            if _val.startswith('0') and len(_val) > 1 and not _val.startswith('0.'):
                 val = _val
             else:
                 if val.is_integer():
