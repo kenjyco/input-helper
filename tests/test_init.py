@@ -220,6 +220,17 @@ class Test__from_string(object):
         assert type(ih.from_string('[1, 2]')) == str
         assert type(ih.from_string([1, 2])) == list
 
+    def test_converted_list(self):
+        value = ih.string_to_converted_list('dog')
+        assert value == ['dog']
+        value = ih.string_to_converted_list('dog, 01, 2, 3.10, 4.0, none, true')
+        assert value == ['dog', '01', 2, 3.1, 4.0, None, True]
+        value = ih.string_to_converted_list(
+            'dog, 01, 2, 3.10, 4.0, none, true',
+            keep_num_as_string=True
+        )
+        assert value == ['dog', '01', '2', '3.10', '4.0', None, True]
+
 
 class Test__get_list_from_arg_strings(object):
     def test_single_arg1(self):

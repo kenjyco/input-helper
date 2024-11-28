@@ -7,6 +7,7 @@ from collections import defaultdict, Counter
 from copy import deepcopy
 from datetime import timedelta
 from fnmatch import fnmatch
+from functools import partial
 from input_helper import matcher
 from json import JSONDecoder, JSONDecodeError
 from os.path import isfile
@@ -263,12 +264,17 @@ def string_to_list(s):
         raise
 
 
-def string_to_converted_list(s):
-    """Return a list of derived items from s where items are separated by , ; |"""
+def string_to_converted_list(s, keep_num_as_string=False):
+    """Return a list of derived items from s where items are separated by , ; |
+
+    - keep_num_as_string: if True, do not attempt to convert number strings to
+      int or float
+    """
+    _from_string = partial(from_string, keep_num_as_string=keep_num_as_string)
     result = []
     if type(s) == str:
         s = s.replace('\\n', '\n').replace('\\t', '\t')
-        result = list(map(from_string, string_to_list(s)))
+        result = list(map(_from_string, string_to_list(s)))
     return result
 
 
