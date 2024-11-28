@@ -202,6 +202,18 @@ class Test__from_string(object):
         assert type(ih.from_string('00001')) == str
         assert ih.from_string('00001') == '00001'
 
+    def test_num_values(self):
+        value = ih.from_string('10.0000')
+        assert value == 10.0
+        value = ih.from_string('10.00004')
+        assert value == 10.00004
+        value = ih.from_string('10.0000', keep_num_as_string=True)
+        assert value == '10.0000'
+        value = ih.from_string('.10')
+        assert value == 0.1
+        value = ih.from_string('.10', keep_num_as_string=True)
+        assert value == '.10'
+
     def test_object(self):
         assert type(ih.from_string('{"a": 1, "b": 2}')) == str
         assert type(ih.from_string({"a": 1, "b": 2})) == dict

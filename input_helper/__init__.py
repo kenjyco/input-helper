@@ -417,8 +417,11 @@ def string_to_version_tuple(s):
     return (int(major), int(minor), patch)
 
 
-def from_string(val):
+def from_string(val, keep_num_as_string=False):
     """Return simple bool, None, int, and float values contained in a string
+
+    - keep_num_as_string: if True, do not attempt to convert number strings to
+      int or float
 
     Useful for converting items in config files parsed by
     `configparser.RawConfigParser()` or values pulled from Redis
@@ -435,6 +438,8 @@ def from_string(val):
         val = False
     elif val.lower() == 'none':
         val = None
+    elif keep_num_as_string:
+        pass
     else:
         try:
             val = float(val)
