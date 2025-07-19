@@ -24,11 +24,11 @@ except (ImportError, ModuleNotFoundError):
     xmljson = None
     xml_fromstring = None
 try:
-    import tty
-    import termios
+    from click import getchar
 except (ImportError, ModuleNotFoundError):
     try:
-        from click import getchar
+        import tty
+        import termios
     except (ImportError, ModuleNotFoundError):
         def getchar():
             message = (
@@ -36,20 +36,20 @@ except (ImportError, ModuleNotFoundError):
                 'Please install "click" package if you want to get unbuffered input.'
             )
             raise Exception(message)
-else:
-    def getchar():
-        """Get a character of input (unbuffrered) from stdin
+    else:
+        def getchar():
+            """Get a character of input (unbuffrered) from stdin
 
-        See: http://code.activestate.com/recipes/134892/
-        """
-        fd = stdin.fileno()
-        old_settings = termios.tcgetattr(fd)
-        try:
-            tty.setraw(stdin.fileno())
-            ch = stdin.read(1)
-        finally:
-            termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
-        return ch
+            See: http://code.activestate.com/recipes/134892/
+            """
+            fd = stdin.fileno()
+            old_settings = termios.tcgetattr(fd)
+            try:
+                tty.setraw(stdin.fileno())
+                ch = stdin.read(1)
+            finally:
+                termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
+            return ch
 
 
 SECONDS_IN_HOUR = 60 * 60
