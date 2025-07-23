@@ -2,7 +2,7 @@ import inspect
 import re
 import sys
 import datetime
-import urllib
+from urllib.parse import quote_plus
 
 
 class Matcher(object):
@@ -283,7 +283,7 @@ class _UrlDetailsMatcher(Matcher):
             results.pop('path')
 
         # The 'filename_prefix' is safe to use as part of a filename
-        results['filename_prefix'] = urllib.parse.quote_plus(
+        results['filename_prefix'] = quote_plus(
             results['full_url'].split('://')[1]
         ).replace('%2F', '--')
 
