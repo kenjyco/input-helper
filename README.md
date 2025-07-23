@@ -17,6 +17,8 @@ This library prioritizes **data integrity** and **cognitive load reduction**. Ke
 - **REPL-Optimized**: Designed for interactive development with immediate feedback
 - **Stateless**: No global configuration or hidden state; same inputs always produce same outputs
 
+Tested for Python 3.5 - 3.13.
+
 ## Install
 
 ```
